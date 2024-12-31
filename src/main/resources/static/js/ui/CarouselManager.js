@@ -7,13 +7,28 @@ class CarouselManager {
     // 이미지 트랙(실제 이미지가 배치될 공간)
     this.track = this.container.querySelector(".carousel-track");
 
-    // 실제 이미지 파일 배열
-    this.slides = [];
-
     // 인디케이터 영역
     this.indicatorContainer = this.container.querySelector(
       ".carousel-indicators"
     );
+
+    // 이전, 다음 슬라이드 버튼
+    this.prevBtn = this.container.querySelector(".carousel-prev");
+    this.nextBtn = this.container.querySelector(".carousel-next");
+
+    // 실제 이미지 파일 배열
+    this.slides = [];
+
+    // 현재 인덱스
+    this.currentIndex = 0;
+
+    // 이벤트 바인딩
+    this.prevBtn.addEventListener("click", (e) => {
+      this.goToSlide(this.currentIndex - 1);
+    });
+    this.nextBtn.addEventListener("click", (e) => {
+      this.goToSlide(this.currentIndex + 1);
+    });
   }
 
   // 기능 : 메서드
@@ -52,7 +67,6 @@ class CarouselManager {
 
   //인디케이터 생성하기
   makeIndicator(index) {
-
     const $indicator = document.createElement("span");
     $indicator.classList.add("indicator");
     if (index === 0) {
@@ -60,6 +74,15 @@ class CarouselManager {
     }
 
     this.indicatorContainer.append($indicator);
+  }
+
+  // 슬라이드 x축 이동함수 (이미지가 100%씩 나란히 있는 형태임)
+  goToSlide(index) {
+    if (index < 0 || index > this.slides.length - 1) return;
+    // 현재 인덱스 갱신
+    this.currentIndex = index;
+    //트랙이동 (다음버튼)
+    this.track.style.transform = `translateX(-${index * 100}%)`;
   }
 }
 export default CarouselManager;
