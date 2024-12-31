@@ -1,11 +1,8 @@
-<%-- src/main/webapp/WEB-INF/views/components/create-post-modal.jsp --%>
+<%-- src/main/webapp/WEB-INF/views/components/create-post-modal.jsp --%> <%@
+page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"
+%> <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-
-
-<div class="modal-container" id="createPostModal" style="display: none;">
+<div class="modal-container" id="createPostModal" style="display: none">
   <div class="modal-backdrop"></div>
   <button class="modal-close-button">
     <i class="fa-solid fa-xmark"></i>
@@ -14,16 +11,15 @@
   <div class="modal-content">
     <!-- 모달 헤더 -->
     <div class="modal-header">
-      <button class="back-button" style="visibility: hidden;">
+      <button class="back-button" style="visibility: hidden">
         <i class="fa-solid fa-arrow-left"></i>
       </button>
       <h2 class="modal-title">새 게시물 만들기</h2>
       <button class="next-button">다음</button>
 
-      <div class="loading-spinner" style="display: none;">
+      <div class="loading-spinner" style="display: none">
         <i class="fa-solid fa-spinner fa-spin"></i>
       </div>
-
     </div>
 
     <!-- 모달 바디 -->
@@ -33,7 +29,18 @@
         <div class="upload-area">
           <i class="fa-regular fa-images"></i>
           <p>사진과 동영상을 여기에 끌어다 놓으세요</p>
-          <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+          <input
+            type="file"
+            id="fileInput"
+            multiple
+            accept="image/*"
+            style="display: none"
+          />
+          <!-- <input
+          type="file"
+          id="fileInput"
+          style="display: block"
+        /> -->
           <button class="upload-button">컴퓨터에서 선택</button>
         </div>
       </div>
@@ -75,14 +82,12 @@
           <div class="write-area">
             <div class="user-info">
               <div class="profile-image">
-                <img src="/images/default-profile.svg" alt="프로필">
+                <img src="/images/default-profile.svg" alt="프로필" />
               </div>
               <span class="username">사용자명</span>
             </div>
             <div class="content-input">
-                <textarea
-                        maxlength="2200"
-                        rows="10"></textarea>
+              <textarea maxlength="2200" rows="10"></textarea>
               <div class="char-counter">0/2,200</div>
             </div>
             <div class="additional-options">
@@ -102,12 +107,11 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
   <!-- 기존 모달 내용 안에 추가 -->
-  <div class="nested-modal" style="display: none;">
+  <div class="nested-modal" style="display: none">
     <div class="nested-modal-content">
       <div class="nested-modal-title">
         <h3>게시물을 삭제하시겠어요?</h3>
@@ -120,5 +124,3 @@
     </div>
   </div>
 </div>
-
-
