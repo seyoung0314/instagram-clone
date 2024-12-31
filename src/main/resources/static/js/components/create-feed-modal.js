@@ -4,6 +4,7 @@ import CarouselManager from "../ui/CarouselManager.js";
 //step 모듈내에서 전역관리
 let currentStep = 1;
 
+
 let step2Carousel = null;
 let step3Carousel = null;
 
@@ -88,7 +89,7 @@ function setUpFileUploadEvents() {
       });
 
       //이미지 슬라이드 생성 
-      //기존 캐러셀이 없을 시에만 생성 (중복방지지)
+      //기존 캐러셀이 없을 시에만 생성 (중복방지)
       if(!step2Carousel){   
         step2Carousel = new CarouselManager($modal.querySelector('.preview-container'));
       }
