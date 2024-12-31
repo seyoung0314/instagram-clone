@@ -4,6 +4,10 @@ import CarouselManager from "../ui/CarouselManager.js";
 //step 모듈내에서 전역관리
 let currentStep = 1;
 
+
+let step2Carousel = null;
+let step3Carousel = null;
+
 //피드 생성 모달을 전역관리
 let $modal = document.getElementById("createPostModal");
 
@@ -84,12 +88,17 @@ function setUpFileUploadEvents() {
         return true;
       });
 
-      //이미지 슬라이드 생성
-      const step2Carousel = new CarouselManager($modal.querySelector('.preview-container'));
+      //이미지 슬라이드 생성 
+      //기존 캐러셀이 없을 시에만 생성 (중복방지)
+      if(!step2Carousel){   
+        step2Carousel = new CarouselManager($modal.querySelector('.preview-container'));
+      }
       step2Carousel.init(validFiles);
 
       //이미지 슬라이드 생성
-      const step3Carousel = new CarouselManager($modal.querySelector('.write-container'));
+      if(!step3Carousel){
+        step3Carousel = new CarouselManager($modal.querySelector('.write-container'));
+      }
       step3Carousel.init(validFiles);
 
     // 모달 step2(이미지 슬라이드)로 이동
@@ -129,6 +138,9 @@ function setUpModalEvents() {
     //모달 닫기
     $modal.style.display = "none";
     document.body.style.overflow = "auto";
+
+    //모달 스텝 초기화
+    goToStep(1);
   };
 
   //피드 생성 모달 열기 이벤트

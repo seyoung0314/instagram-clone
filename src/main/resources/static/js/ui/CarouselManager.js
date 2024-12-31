@@ -35,16 +35,22 @@ class CarouselManager {
   // 초기 이미지 파일 배열 받기
   init(files) {
     this.slides = files;
-    console.log(this.slides);
+
+  
+    //이미지 슬라이드 위치 0번으로 초기화화
+    this.goToSlide(0);
 
     //이미지 슬라이드 띄우기
     this.setUpPreview();
   }
 
   setUpPreview() {
+
+
     //이미지 트랙 리셋
     this.track.innerHTML = "";
-    //인디케이터 리셋셋
+    //인디케이터 리셋
+
     this.indicatorContainer.innerHTML = "";
 
     this.slides.forEach((file, index) => {
