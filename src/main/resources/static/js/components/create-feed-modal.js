@@ -43,6 +43,8 @@ function goToStep(step) {
     $step.classList.toggle("active", step === index + 1);
 
     if (step === 1) {
+      // 다음번 change이벤트 발동을 위해 초기화
+      $fileInput.value = ''; 
       $nextStepBtn.style.display = 'none';
       $backStepBtn.style.visibility = 'hidden';
       $modalTitle.textContent = '새 게시물 만들기';
