@@ -9,6 +9,24 @@ let element = {
   $fileInput: $modal.querySelector("#fileInput"),
 };
 
+// 모달 바디 스텝을 이동하는 함수
+function goToStep(step) {
+  // active 클래스 포함 시 이동
+  [...$modal.querySelectorAll(".step")].forEach(($step, index) => {
+
+    // if ($step.classList.contains("active")) {
+    //   $step.classList.remove("active");
+    // }
+    // if (step === index + 1) {
+    //   $step.classList.add("active");
+    // }
+
+    //.toggle(,boolean) : true - 모두 추가 , false - 모두 제거거
+    $step.classList.toggle("active", step === index + 1);
+
+  });
+}
+
 // 파일 업로드 관련 이벤트 함수
 function setUpFileUploadEvents() {
   const { $uploadBtn, $fileInput } = element;
@@ -39,8 +57,8 @@ function setUpFileUploadEvents() {
         return true;
       });
 
-      console.log(validFiles);
-      
+    // 모달 step2(이미지 슬라이드)로 이동
+    goToStep(2);
   };
 
   // 업로드 버튼을 누르면 숨겨져 있던 파일 선택창이 눌리도록 조작
