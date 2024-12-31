@@ -1,3 +1,6 @@
+//step 모듈내에서 전역관리
+let currentStep = 1;
+
 //피드 생성 모달을 전역관리
 let $modal = document.getElementById("createPostModal");
 
@@ -14,6 +17,10 @@ let element = {
 
 // 모달 바디 스텝을 이동하는 함수
 function goToStep(step) {
+  if (step < 1 || step > 3) return;
+
+  currentStep = step;
+
   const { $backStepBtn, $nextStepBtn, $modalTitle } = element;
 
   // active 클래스 포함 시 이동
@@ -29,17 +36,17 @@ function goToStep(step) {
     $step.classList.toggle("active", step === index + 1);
 
     if (step === 1) {
-      $nextStepBtn.style.display = "none";
-      $backStepBtn.style.visibility = "hidden";
-      $modalTitle.textContent = "새 게시물 만들기";
+      $nextStepBtn.style.display = 'none';
+      $backStepBtn.style.visibility = 'hidden';
+      $modalTitle.textContent = '새 게시물 만들기';
     } else if (step === 2) {
-      $nextStepBtn.style.display = "block";
-      $backStepBtn.style.visibility = "visible";
-      $modalTitle.textContent = "편집";
-      $nextStepBtn.textContent = "다음";
+      $nextStepBtn.style.display = 'block';
+      $backStepBtn.style.visibility = 'visible';
+      $modalTitle.textContent = '편집';
+      $nextStepBtn.textContent = '다음';
     } else if (step === 3) {
-      $backStepBtn.style.display = "공유하기";
-      $modalTitle.textContent = "새 게시물 만들기";
+      $nextStepBtn.textContent = '공유하기';
+      $modalTitle.textContent = '새 게시물 만들기';
     }
   });
 }
@@ -94,7 +101,7 @@ function setUpFileUploadEvents() {
 
 // 피드 생성 모달 관련 이벤트 함수
 function setUpModalEvents() {
-  const { $closeBtn, $backdrop } = element;
+  const { $closeBtn, $backdrop, $backStepBtn, $nextStepBtn } = element;
 
   // 모달 열기 함수
   const openModal = (e) => {
@@ -124,6 +131,17 @@ function setUpModalEvents() {
 
   // 배경 눌렀을 때
   $backdrop.addEventListener("click", closeModal);
+
+  // 모달 이전,다음 버튼 클릭 이벤트
+  $backStepBtn.addEventListener("click", () => goToStep(currentStep - 1));
+
+  $nextStepBtn.addEventListener("click", () => {
+    if (currentStep < 3) {
+      goToStep(currentStep + 1);
+    } else {
+      alert("서버로 게시글 공유");
+    }
+  });
 }
 
 // 이벤트 바인딩 관련 함수
