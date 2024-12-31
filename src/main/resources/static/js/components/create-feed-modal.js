@@ -7,13 +7,17 @@ let element = {
   $backdrop: $modal.querySelector(".modal-backdrop"),
   $uploadBtn: $modal.querySelector(".upload-button"),
   $fileInput: $modal.querySelector("#fileInput"),
+  $backStepBtn: $modal.querySelector(".back-button"),
+  $nextStepBtn: $modal.querySelector(".next-button"),
+  $modalTitle: $modal.querySelector(".modal-title"),
 };
 
 // 모달 바디 스텝을 이동하는 함수
 function goToStep(step) {
+  const { $backStepBtn, $nextStepBtn, $modalTitle } = element;
+
   // active 클래스 포함 시 이동
   [...$modal.querySelectorAll(".step")].forEach(($step, index) => {
-
     // if ($step.classList.contains("active")) {
     //   $step.classList.remove("active");
     // }
@@ -21,9 +25,22 @@ function goToStep(step) {
     //   $step.classList.add("active");
     // }
 
-    //.toggle(,boolean) : true - 모두 추가 , false - 모두 제거거
+    //.toggle(,boolean) : true - 모두 추가 , false - 모두 제거
     $step.classList.toggle("active", step === index + 1);
 
+    if (step === 1) {
+      $nextStepBtn.style.display = "none";
+      $backStepBtn.style.visibility = "hidden";
+      $modalTitle.textContent = "새 게시물 만들기";
+    } else if (step === 2) {
+      $nextStepBtn.style.display = "block";
+      $backStepBtn.style.visibility = "visible";
+      $modalTitle.textContent = "편집";
+      $nextStepBtn.textContent = "다음";
+    } else if (step === 3) {
+      $backStepBtn.style.display = "공유하기";
+      $modalTitle.textContent = "새 게시물 만들기";
+    }
   });
 }
 
