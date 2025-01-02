@@ -21,6 +21,9 @@ let element = {
   $uploadArea: $modal.querySelector(".upload-area"),
   $contentTextarea: $modal.querySelector(".content-input textarea"),
   $charCounter: $modal.querySelector(".char-counter"),
+  $nestedModal: $modal.querySelector(".nested-modal"),
+  $deleteBtn: $modal.querySelector(".delete-button"),
+  $cancelBtn: $modal.querySelector(".cancel-button"),
 };
 
 // 모달 바디 스텝을 이동하는 함수
@@ -154,7 +157,8 @@ function setUpFileUploadEvents() {
 
 // 피드 생성 모달 관련 이벤트 함수
 function setUpModalEvents() {
-  const { $closeBtn, $backdrop, $backStepBtn, $nextStepBtn } = element;
+  const { $closeBtn, $backdrop, $backStepBtn, $nextStepBtn, $nestedModal } =
+    element;
 
   // 모달 열기 함수
   const openModal = (e) => {
@@ -168,6 +172,13 @@ function setUpModalEvents() {
   // 모달 닫기 함수
   const closeModal = (e) => {
     e.preventDefault();
+
+    //step2,3 에선 닫기여부 모달 띄우기
+    if (currentStep >= 2) {
+      //중첩 모달 열기
+      $nestedModal.style.display = "flex";
+      return;
+    }
     //모달 닫기
     $modal.style.display = "none";
     document.body.style.overflow = "auto";
@@ -217,11 +228,27 @@ function setUpTextareaEvents() {
   });
 }
 
+// 피드 모달 닫기 시 삭제/취소 관련
+function setUpNestedModalEvents() {
+  const { $nestedModal, $deleteBtn, $cancelBtn } = element;
+
+  //취소버튼
+  $cancelBtn.addEventListener("click", () => {
+    $nestedModal.style.display = "none";
+  });
+
+  //삭제버튼
+  $deleteBtn.addEventListener("click", () => {
+    window.location.reload();
+  });
+}
+
 // 이벤트 바인딩 관련 함수
 function bindEvents() {
   setUpModalEvents(); //모달관련 이벤트
   setUpFileUploadEvents(); //파일업로드 관련 이벤트
   setUpTextareaEvents();
+  setUpNestedModalEvents(); //중첩 모달 관련 이벤트트
 }
 
 //모달 관련 js 함수 - 외부에 노출
