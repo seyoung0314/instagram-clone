@@ -2,6 +2,8 @@ package com.example.instagramclone.repository;
 
 import com.example.instagramclone.domain.post.entity.Post;
 import com.example.instagramclone.domain.post.entity.PostImage;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,13 @@ class PostRepositoryTest {
 
     @Autowired
     PostRepository postRepository;
+
+
+    @BeforeEach
+    void setUp() {
+        System.out.println("\n\n>>>>>>>>>>>>>>>>>>>> Test Start <<<<<<<<<<<<<<<<<<<<");
+    }
+
 
     // 테스트는 케이스별 메서드를 한개씩 만듬
     @Test
@@ -104,5 +113,11 @@ class PostRepositoryTest {
         assertThat(imageList.size()).isEqualTo(2);
         assertThat(imageList.get(0).getImageOrder()).isEqualTo(1);
         assertThat(imageList.get(1).getImageUrl()).contains("second");
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.out.println(">>>>>>>>>>>>>>>>>>>> Test End <<<<<<<<<<<<<<<<<<<<\n\n");
+        // 각 테스트 실행 후 정리 작업
     }
 }
