@@ -91,6 +91,11 @@ class CarouselManager {
     this.nextBtn.style.display =
       index === this.slides.length - 1 ? "none" : "flex";
 
+    //인디케이터 수정
+    const $indicators = [...this.indicatorContainer.children];
+    $indicators.forEach(($ind, idx) => {
+      $ind.classList.toggle("active", idx === index);
+    });
   }
 }
 export default CarouselManager;
