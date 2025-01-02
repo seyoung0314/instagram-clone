@@ -36,7 +36,6 @@ class CarouselManager {
   init(files) {
     this.slides = files;
 
-  
     //이미지 슬라이드 위치 0번으로 초기화화
     this.goToSlide(0);
 
@@ -45,12 +44,9 @@ class CarouselManager {
   }
 
   setUpPreview() {
-
-
     //이미지 트랙 리셋
     this.track.innerHTML = "";
     //인디케이터 리셋
-
     this.indicatorContainer.innerHTML = "";
 
     this.slides.forEach((file, index) => {
@@ -89,6 +85,12 @@ class CarouselManager {
     this.currentIndex = index;
     //트랙이동 (다음버튼)
     this.track.style.transform = `translateX(-${index * 100}%)`;
+
+    //이전,다음 슬라이드 버튼 활성화 여부
+    this.prevBtn.style.display = index === 0 ? "none" : "flex";
+    this.nextBtn.style.display =
+      index === this.slides.length - 1 ? "none" : "flex";
+
   }
 }
 export default CarouselManager;
