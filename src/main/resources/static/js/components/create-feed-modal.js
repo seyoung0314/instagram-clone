@@ -6,6 +6,9 @@ let currentStep = 1;
 let step2Carousel = null;
 let step3Carousel = null;
 
+// 선택한 이미지 파일들을 전역관리
+let selectedFiles = null;
+
 //피드 생성 모달을 전역관리
 let $modal = document.getElementById("createPostModal");
 
@@ -25,6 +28,48 @@ let element = {
   $deleteBtn: $modal.querySelector(".delete-button"),
   $cancelBtn: $modal.querySelector(".cancel-button"),
 };
+
+async function fetchFeed() {
+  if (currentStep !== 3) return;
+
+  const { $contentTextarea } = element;
+
+  // 작성자이름과 피드 내용 전송송
+  const feedData = {
+    writer: "web",
+    content: $contentTextarea.value.trim(),
+  };
+
+  // JSON과 이미지를 같이 전송하려면 form-data가 필요함
+  const formData = new FormData();
+  // JSON 전송
+  formData.append(
+    "feed",
+    new Blob([JSON.stringify(feedData)], {
+      type: "application/json",
+    })
+  );
+
+  // 이미지 전송
+  selectedFiles.forEach((file) => {
+    formData.append("images", file);
+  });
+  // 서버에 POST요청 전송
+  const response = await fetch("/api/posts", {
+    method: "POST",
+    body: formData,
+  });
+  const data = await response.json();
+
+  console.log(response.ok);
+  
+  if (response.ok) {
+    window.location.reload(); // 피드 새로고침
+  } else {
+    console.error("failed to request");
+    alert(data.message);
+  }
+}
 
 // 모달 바디 스텝을 이동하는 함수
 function goToStep(step) {
@@ -93,6 +138,9 @@ function setUpFileUploadEvents() {
         }
         return true;
       });
+
+      // 서버전송을 위해 전역변수에 저장
+      selectedFiles = validFiles;
 
     //이미지 슬라이드 생성
     //기존 캐러셀이 없을 시에만 생성 (중복방지)
@@ -207,6 +255,7 @@ function setUpModalEvents() {
       goToStep(currentStep + 1);
     } else {
       alert("서버로 게시글 공유");
+      fetchFeed(); // 서버로 전송
     }
   });
 }
