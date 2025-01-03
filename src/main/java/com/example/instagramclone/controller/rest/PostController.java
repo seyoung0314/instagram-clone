@@ -36,6 +36,8 @@ public class PostController {
             log.info("===============image {}", image.getOriginalFilename());
         });
 
+        postCreate.setImages(images);
+
         // 이미지와 JSON을 서비스클래스로 전송
         postService.createFeed(postCreate);
 
