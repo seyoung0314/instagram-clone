@@ -320,4 +320,4 @@ function initCreateFeedModal() {
   bindEvents();
 }
 
-export default initCreateFeedModal();
+export default initCreateFeedModal;
