@@ -27,7 +27,17 @@ let element = {
   $nestedModal: $modal.querySelector(".nested-modal"),
   $deleteBtn: $modal.querySelector(".delete-button"),
   $cancelBtn: $modal.querySelector(".cancel-button"),
+  $loadingSpinner: $modal.querySelector(".loading-spinner"),
 };
+
+// 로딩 스피너 처리
+function setLoading(loading = false) {
+  const { $loadingSpinner, $backStepBtn, $nextStepBtn } = element;
+  $loadingSpinner.style.display = loading ? "block" : "none";
+  $backStepBtn.style.visibility = loading ? "hidden" : "visible";
+  $nextStepBtn.style.display = loading ? "none" : "block";
+  $nextStepBtn.disabled = loading;
+}
 
 async function fetchFeed() {
   if (currentStep !== 3) return;
@@ -54,21 +64,26 @@ async function fetchFeed() {
   selectedFiles.forEach((file) => {
     formData.append("images", file);
   });
-  // 서버에 POST요청 전송
-  const response = await fetch("/api/posts", {
-    method: "POST",
-    body: formData,
-  });
-  const data = await response.json();
 
-  console.log(response.ok);
-  
-  if (response.ok) {
-    window.location.reload(); // 피드 새로고침
-  } else {
-    console.error("failed to request");
-    alert(data.message);
-  }
+  setLoading(true);
+
+  setTimeout(async () => {
+    // 서버에 POST요청 전송
+    const response = await fetch("/api/posts", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      window.location.reload(); // 피드 새로고침
+    } else {
+      console.error("failed to request");
+      alert(data.message);
+    }
+    setLoading(false);
+  }, 1500);
 }
 
 // 모달 바디 스텝을 이동하는 함수
@@ -139,8 +154,8 @@ function setUpFileUploadEvents() {
         return true;
       });
 
-      // 서버전송을 위해 전역변수에 저장
-      selectedFiles = validFiles;
+    // 서버전송을 위해 전역변수에 저장
+    selectedFiles = validFiles;
 
     //이미지 슬라이드 생성
     //기존 캐러셀이 없을 시에만 생성 (중복방지)
