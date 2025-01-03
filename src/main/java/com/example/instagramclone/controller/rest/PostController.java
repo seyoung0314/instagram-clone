@@ -1,11 +1,10 @@
 package com.example.instagramclone.controller.rest;
 
 import com.example.instagramclone.domain.post.dto.request.PostCreate;
-<<<<<<< HEAD
+
 import com.example.instagramclone.domain.post.dto.response.PostResponse;
 import com.example.instagramclone.domain.post.entity.Post;
-=======
->>>>>>> 87d6936801caa1a395d3e38a899b618ed8dc81fb
+
 import com.example.instagramclone.exception.ErrorCode;
 import com.example.instagramclone.exception.PostException;
 import com.example.instagramclone.service.PostService;

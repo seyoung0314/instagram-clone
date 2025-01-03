@@ -62,26 +62,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PostException.class)
     public ResponseEntity<?> handlePostException(PostException e, HttpServletRequest request) {
         log.error("PostException occurred: {}", e.getMessage(), e);
-<<<<<<< HEAD
 
         ErrorResponse response = createErrorResponse
                 (e, request, e.getErrorCode().getStatus(), e.getMessage());
 
-=======
-        ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(e.getErrorCode().getStatus().value())
-                .error(e.getErrorCode().name())
-                .message(e.getMessage())
-                .path(request.getRequestURI())
-                .build();
->>>>>>> 87d6936801caa1a395d3e38a899b618ed8dc81fb
         return ResponseEntity
                 .status(e.getErrorCode().getStatus())
                 .body(response);
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 87d6936801caa1a395d3e38a899b618ed8dc81fb
 }
