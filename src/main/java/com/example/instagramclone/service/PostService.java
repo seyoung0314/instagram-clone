@@ -28,7 +28,10 @@ public class PostService {
         // 전체 피드 조회
         return postRepository.findAll()
                 .stream()
-                .map(PostResponse::from)
+                .map(post -> {
+                    post.setImages(postRepository.findImagesByPostId(post.getId()));
+                    return PostResponse.from(post);
+                })
                 .collect(Collectors.toList());
     }
 
