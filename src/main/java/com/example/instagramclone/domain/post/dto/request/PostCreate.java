@@ -1,11 +1,13 @@
 package com.example.instagramclone.domain.post.dto.request;
 
+import com.example.instagramclone.domain.post.entity.Post;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 //피드 생성시 클라이언트가 보낸 json 데이터를 파싱하고 검증
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -15,6 +17,13 @@ public class PostCreate {
     @NotBlank(message = "작성자 정보는 필수입니다.")
     private String writer;
 
-    @Size(max= 2200,message = "피드내용은 최대 2200자입니다.")
+    @Size(max = 2200, message = "피드내용은 최대 2200자입니다.")
     private String content;
+
+    public Post toEntity() {
+        return Post.builder()
+                .writer(this.writer)
+                .content(this.content)
+                .build();
+    }
 }
