@@ -1,12 +1,18 @@
-
-
 let element = {
   //피드가 들어갈 전체 영역
   $feedContainer: document.querySelector(".feed-container"),
-}
+};
 
 //한개의 피드를 렌더링하는 함수
-function createFeedItem(feed){
+function createFeedItem({ writer, content, images, createdAt }) {
+  const makeImageTags = (images) => {
+    let imgTag = "";
+    for (const img of images) {
+      imgTag += `<img src="${img.imageUrl}">`;
+    }
+    return imgTag;
+  };
+
   return `
   <article class="post">
       <div class="post-header">
@@ -16,7 +22,7 @@ function createFeedItem(feed){
           </div>
           <div class="post-user-details">
             <a href="#" class="post-username">
-                <!--      작성자 이름 배치      -->
+                ${writer}
             </a>
           </div>
         </div>
@@ -29,8 +35,13 @@ function createFeedItem(feed){
         <div class="carousel-container">
           <div class="carousel-track">
             <!--     이미지 목록 배치      -->
+            ${images.map(image => `
+                <img src="${image.imageUrl}" alt="feed image${image.imageOrder}">
+              `).join('')}
           </div>
-          ${feed.images.length > 1 ? `
+          ${
+            images.length > 1
+              ? `
             <button class="carousel-prev">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
@@ -39,8 +50,14 @@ function createFeedItem(feed){
             </button>
             <div class="carousel-indicators">
                 <!--        인디케이터 렌더링        -->
+                ${images.map((_,i) => `
+                  <span class="indicator ${i === 0 ? 'active' : ''}"></span>
+                `).join('')}
             </div>
-          ` : ''}
+          `
+
+              : ""
+          }
         </div>
       </div>
       
@@ -69,10 +86,10 @@ function createFeedItem(feed){
 
       <div class="post-content">
         <div class="post-text">
-            <!--     피드 내용     -->
+        ${content}
         </div>
         <div class="post-time">
-            <!--      피드 생성 시간      -->
+            ${createdAt}
         </div>
       </div>
       
@@ -87,24 +104,25 @@ function createFeedItem(feed){
 }
 
 //피드 렌더링 함수
-async function renderFeed(){
-
-  const {$feedContainer} = element;
+async function renderFeed() {
+  const { $feedContainer } = element;
 
   //피드 데이터를 서버로부터 불러오기
   const feedList = await fetchFeed();
-  console.log(feedList[0]);
 
   //feed html을 생성하는 함수
-  const feedHtml = createFeedItem(feedList[0]);
+
+  const feedHtml = feedList.map((feed)=>
+    createFeedItem(feed)).join('');
+
   $feedContainer.innerHTML = feedHtml;
 }
 
-//피드를 서버로부터 불러오는 함수 
+//피드를 서버로부터 불러오는 함수
 async function fetchFeed() {
-  const response = await fetch('/api/posts');
+  const response = await fetch("/api/posts");
 
-  if(!response.ok){
+  if (!response.ok) {
     alert("피드목록을 불러오는 데 실패했습니다.");
   }
 
@@ -112,10 +130,8 @@ async function fetchFeed() {
 }
 
 //외부에 노출시킬 피드관련 함수
-function initFeed(){
-
+function initFeed() {
   renderFeed();
 }
-
 
 export default initFeed;
