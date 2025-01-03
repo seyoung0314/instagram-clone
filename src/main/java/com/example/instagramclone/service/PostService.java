@@ -1,6 +1,8 @@
 package com.example.instagramclone.service;
 
 import com.example.instagramclone.domain.post.dto.request.PostCreate;
+import com.example.instagramclone.domain.post.dto.response.PostImageResponse;
+import com.example.instagramclone.domain.post.dto.response.PostResponse;
 import com.example.instagramclone.domain.post.entity.Post;
 import com.example.instagramclone.domain.post.entity.PostImage;
 import com.example.instagramclone.repository.PostRepository;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,6 +21,40 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository; // DB
     private final FileUploadUtil fileUploadUtil;  // 로컬
+
+    // 피드 목록 조회 중간처리 (전체조회 후 이미지 조회하는 방식)
+    public List<PostResponse> findAllFeeds() {
+        //전체 피드 조회
+        List<Post> feedList = postRepository.findAll();
+
+        List<PostResponse> responseList = new ArrayList<>();
+
+        for (Post feed : feedList) {
+            List<PostImage> imageList = postRepository.findImagesByPostId(feed.getId());
+
+            // 이미지 리스트를 dto(PostImageResponse)로 변환
+            List<PostImageResponse> imageResponseList = new ArrayList<>();
+            for (PostImage postImage : imageList) {
+                PostImageResponse imageResponse = PostImageResponse.builder()
+                        .id(postImage.getId())
+                        .imageUrl(postImage.getImageUrl())
+                        .imageOrder(postImage.getImageOrder())
+                        .build();
+                imageResponseList.add(imageResponse);
+            }
+            // 클라이언트에 전달할 dto(PostResponse)로 변환
+            PostResponse postResponse = PostResponse.builder()
+                    .id(feed.getId())
+                    .content(feed.getContent())
+                    .writer(feed.getWriter())
+                    .images(imageResponseList)
+                    .createdAt(feed.getCreatedAt())
+                    .updatedAt(feed.getUpdatedAt())
+                    .build();
+            responseList.add(postResponse);
+        }
+        return responseList;
+    }
 
     // 피드 생성 DB에 가기 전 후 중간처리
     public Long createFeed(PostCreate postCreate) {
