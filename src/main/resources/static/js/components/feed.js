@@ -95,7 +95,7 @@ function createFeedItem({ writer, content, images, createdAt }) {
 
       <div class="post-content">
         <div class="post-text">
-        ${content}
+        ${truncateContent(writer, content)}
         </div>
         <div class="post-time">
             ${formatDate(createdAt)}
@@ -139,6 +139,26 @@ async function renderFeed() {
       carouselManager.initWithImgTag($images);
     }
   });
+
+  // 더 보기 버튼 이벤트 처리
+  const $moreButtons = [...document.querySelectorAll('.more-button')];
+
+  $moreButtons.forEach($btn => { 
+
+    $btn.addEventListener('click', e => { 
+      const $captionDiv = $btn.closest('.post-text');
+      const $truncatedSpan = $captionDiv.querySelector('.truncated-text');
+      const $fullSpan = $captionDiv.querySelector('.full-text');
+
+      if ($truncatedSpan && $fullSpan) {
+        $truncatedSpan.style.display = 'none';
+        $fullSpan.style.display = 'inline';
+      }
+      $btn.style.display = 'none';
+    });
+
+  });
+
 }
 
 //피드를 서버로부터 불러오는 함수
@@ -178,7 +198,28 @@ function formatDate(dateString) {
   ).format(date);
   
 }
+// 텍스트 길이에 따른 더보기 처리 함수
+function truncateContent(writer, content, maxLength = 20) {
+  // 1. 먼저 텍스트 길이 체크
+  if (content.length <= maxLength) {
+    return `
+      <a href="#" class="post-username">${writer}</a>
+      <span class="post-caption">${content}</span>
+    `;
+  }
 
+  // 2. 긴 텍스트의 경우 처리
+  const truncatedContent = content.substring(0, maxLength);
+
+  return `
+    <a href="#" class="post-username">${writer}</a>
+    <span class="post-caption post-caption-truncated">
+      <span class="truncated-text">${truncatedContent}...</span>
+      <span class="full-text" style="display: none;">${content}</span>
+    </span>
+    <button class="more-button">더 보기</button>
+  `;
+}
 
 //외부에 노출시킬 피드관련 함수
 function initFeed() {
