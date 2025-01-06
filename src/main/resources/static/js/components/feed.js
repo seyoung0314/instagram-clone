@@ -98,7 +98,7 @@ function createFeedItem({ writer, content, images, createdAt }) {
         ${content}
         </div>
         <div class="post-time">
-            ${createdAt}
+            ${formatDate(createdAt)}
         </div>
       </div>
       
@@ -151,6 +151,34 @@ async function fetchFeed() {
 
   return response.json();
 }
+
+// 피드의 날짜를 조작
+function formatDate(dateString) {
+  // 날짜문자열을 날짜객체로 변환
+  const date = new Date(dateString);
+
+  // 현재시간을 구함
+  const now = new Date();
+
+  // 두 시간 사이 값을 구함
+  const diff = Math.floor((now - date) / 1000);
+
+  if (diff < 60) return '방금 전';
+  if (diff < 60 * 60) return `${Math.floor(diff / 60)}분 전`;
+  if (diff < 60 * 60 * 24) return `${Math.floor(diff / (60 * 60))}시간 전`;
+  if (diff < 60 * 60 * 24 * 7) return `${Math.floor(diff / (60 * 60 * 24))}일 전`;
+
+  return new Intl.DateTimeFormat(
+    'ko-KR', 
+    {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }
+  ).format(date);
+  
+}
+
 
 //외부에 노출시킬 피드관련 함수
 function initFeed() {
