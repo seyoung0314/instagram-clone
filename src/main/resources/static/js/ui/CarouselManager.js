@@ -36,11 +36,20 @@ class CarouselManager {
   init(files) {
     this.slides = files;
 
-    //이미지 슬라이드 위치 0번으로 초기화화
+    //이미지 슬라이드 위치 0번으로 초기화
     this.goToSlide(0);
 
     //이미지 슬라이드 띄우기
     this.setUpPreview();
+  }
+
+  // 이미지파일 대신 이미지 태그를 받아 이벤트처리만 수행하는 함수
+  initWithImgTag($images) {
+    this.slides = $images;
+
+      //이미지 슬라이드 위치 0번으로 초기화
+      this.goToSlide(0);
+
   }
 
   setUpPreview() {

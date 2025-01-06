@@ -1,3 +1,5 @@
+import CarouselManager from "../ui/CarouselManager.js";
+
 let element = {
   //피드가 들어갈 전체 영역
   $feedContainer: document.querySelector(".feed-container"),
@@ -35,9 +37,13 @@ function createFeedItem({ writer, content, images, createdAt }) {
         <div class="carousel-container">
           <div class="carousel-track">
             <!--     이미지 목록 배치      -->
-            ${images.map(image => `
+            ${images
+              .map(
+                (image) => `
                 <img src="${image.imageUrl}" alt="feed image${image.imageOrder}">
-              `).join('')}
+              `
+              )
+              .join("")}
           </div>
           ${
             images.length > 1
@@ -50,12 +56,15 @@ function createFeedItem({ writer, content, images, createdAt }) {
             </button>
             <div class="carousel-indicators">
                 <!--        인디케이터 렌더링        -->
-                ${images.map((_,i) => `
-                  <span class="indicator ${i === 0 ? 'active' : ''}"></span>
-                `).join('')}
+                ${images
+                  .map(
+                    (_, i) => `
+                  <span class="indicator ${i === 0 ? "active" : ""}"></span>
+                `
+                  )
+                  .join("")}
             </div>
           `
-
               : ""
           }
         </div>
@@ -112,10 +121,24 @@ async function renderFeed() {
 
   //feed html을 생성하는 함수
 
-  const feedHtml = feedList.map((feed)=>
-    createFeedItem(feed)).join('');
+  const feedHtml = feedList.map((feed) => createFeedItem(feed)).join("");
 
   $feedContainer.innerHTML = feedHtml;
+
+  // 각 피드마다 캐러셀 설정
+  const $carouselContainerList = [...document.querySelectorAll(".carousel-container")];
+
+  $carouselContainerList.forEach(($carouselContainer) => {
+
+    const $images = [...$carouselContainer.querySelectorAll(".carousel-track img")];
+
+    // 이미지가 2개이상인 이미지리스트만 캐러셀 설정
+    if ($images.length >= 2) {
+      const carouselManager = new CarouselManager($carouselContainer);
+      // - 현재 렌더링이 모두 되어있는 상황: 이벤트만 걸어주면 되는 상황
+      carouselManager.initWithImgTag($images);
+    }
+  });
 }
 
 //피드를 서버로부터 불러오는 함수
