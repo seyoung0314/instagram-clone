@@ -126,11 +126,14 @@ async function renderFeed() {
   $feedContainer.innerHTML = feedHtml;
 
   // 각 피드마다 캐러셀 설정
-  const $carouselContainerList = [...document.querySelectorAll(".carousel-container")];
+  const $carouselContainerList = [
+    ...document.querySelectorAll(".carousel-container"),
+  ];
 
   $carouselContainerList.forEach(($carouselContainer) => {
-
-    const $images = [...$carouselContainer.querySelectorAll(".carousel-track img")];
+    const $images = [
+      ...$carouselContainer.querySelectorAll(".carousel-track img"),
+    ];
 
     // 이미지가 2개이상인 이미지리스트만 캐러셀 설정
     if ($images.length >= 2) {
@@ -141,24 +144,21 @@ async function renderFeed() {
   });
 
   // 더 보기 버튼 이벤트 처리
-  const $moreButtons = [...document.querySelectorAll('.more-button')];
+  const $moreButtons = [...document.querySelectorAll(".more-button")];
 
-  $moreButtons.forEach($btn => { 
-
-    $btn.addEventListener('click', e => { 
-      const $captionDiv = $btn.closest('.post-text');
-      const $truncatedSpan = $captionDiv.querySelector('.truncated-text');
-      const $fullSpan = $captionDiv.querySelector('.full-text');
+  $moreButtons.forEach(($btn) => {
+    $btn.addEventListener("click", (e) => {
+      const $captionDiv = $btn.closest(".post-text");
+      const $truncatedSpan = $captionDiv.querySelector(".truncated-text");
+      const $fullSpan = $captionDiv.querySelector(".full-text");
 
       if ($truncatedSpan && $fullSpan) {
-        $truncatedSpan.style.display = 'none';
-        $fullSpan.style.display = 'inline';
+        $truncatedSpan.style.display = "none";
+        $fullSpan.style.display = "inline";
       }
-      $btn.style.display = 'none';
+      $btn.style.display = "none";
     });
-
   });
-
 }
 
 //피드를 서버로부터 불러오는 함수
@@ -172,6 +172,15 @@ async function fetchFeed() {
   return response.json();
 }
 
+// 해시태그만 추출해서 링크로 감싸기
+function convertHashtagsToLinks(content) {
+  // #으로 시작하고 공백이나 줄바꿈으로 끝나는 문자열 찾기
+  return content.replace(
+    /#[\w가-힣]+/g,
+    (match) => `<a href="#" class="hashtag">${match}</a>`
+  );
+}
+
 // 피드의 날짜를 조작
 function formatDate(dateString) {
   // 날짜문자열을 날짜객체로 변환
@@ -183,20 +192,17 @@ function formatDate(dateString) {
   // 두 시간 사이 값을 구함
   const diff = Math.floor((now - date) / 1000);
 
-  if (diff < 60) return '방금 전';
+  if (diff < 60) return "방금 전";
   if (diff < 60 * 60) return `${Math.floor(diff / 60)}분 전`;
   if (diff < 60 * 60 * 24) return `${Math.floor(diff / (60 * 60))}시간 전`;
-  if (diff < 60 * 60 * 24 * 7) return `${Math.floor(diff / (60 * 60 * 24))}일 전`;
+  if (diff < 60 * 60 * 24 * 7)
+    return `${Math.floor(diff / (60 * 60 * 24))}일 전`;
 
-  return new Intl.DateTimeFormat(
-    'ko-KR', 
-    {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }
-  ).format(date);
-  
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
 }
 // 텍스트 길이에 따른 더보기 처리 함수
 function truncateContent(writer, content, maxLength = 20) {
@@ -204,7 +210,7 @@ function truncateContent(writer, content, maxLength = 20) {
   if (content.length <= maxLength) {
     return `
       <a href="#" class="post-username">${writer}</a>
-      <span class="post-caption">${content}</span>
+      <span class="post-caption">${convertHashtagsToLinks(content)}</span>
     `;
   }
 
@@ -214,8 +220,8 @@ function truncateContent(writer, content, maxLength = 20) {
   return `
     <a href="#" class="post-username">${writer}</a>
     <span class="post-caption post-caption-truncated">
-      <span class="truncated-text">${truncatedContent}...</span>
-      <span class="full-text" style="display: none;">${content}</span>
+      <span class="truncated-text">${convertHashtagsToLinks(truncatedContent)}...</span>
+      <span class="full-text" style="display: none;">${convertHashtagsToLinks(content)}</span>
     </span>
     <button class="more-button">더 보기</button>
   `;
