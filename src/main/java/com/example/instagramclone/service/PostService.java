@@ -3,7 +3,6 @@ package com.example.instagramclone.service;
 import com.example.instagramclone.domain.hashtag.entity.Hashtag;
 import com.example.instagramclone.domain.hashtag.entity.PostHashtag;
 import com.example.instagramclone.domain.post.dto.request.PostCreate;
-import com.example.instagramclone.domain.post.dto.response.PostImageResponse;
 import com.example.instagramclone.domain.post.dto.response.PostResponse;
 import com.example.instagramclone.domain.post.entity.Post;
 import com.example.instagramclone.domain.post.entity.PostImage;
@@ -16,8 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -85,6 +84,7 @@ public class PostService {
 
         // 컨트롤러에게 결과 반환
     }
+
     // 해시태그 관련 처리 메서드
     private void processHashtags(Post post) {
         // 1. 피드 내용에서 해시태그들을 모두 추출 (중복없이)
@@ -95,14 +95,15 @@ public class PostService {
         hashtagNames.forEach(hashtagName -> {
 
             // 일단 해시태그가 저장되어있는지 여부를 확인 - 조회해봄
-            Hashtag foundHashtag = hashtagRepository.findByName(hashtagName);
+           Hashtag foundHashtag = hashtagRepository.findByName(hashtagName)
+                    .orElseGet(() -> {
+                        Hashtag newHashtag = Hashtag.builder().name(hashtagName).build();
+                        hashtagRepository.insertHashtag(newHashtag);
+                        log.debug("new hashtag saved: {}", hashtagName);
+                        return newHashtag;
+                    })  //일단 조회해보고 (null이면 이 부분 수행)
+                    ;
 
-            // 해시태그 저장 명령
-            if (foundHashtag == null) {
-                foundHashtag = Hashtag.builder().name(hashtagName).build();
-                hashtagRepository.insertHashtag(foundHashtag);
-                log.debug("new hashtag saved: {}", hashtagName);
-            }
             // 3. 해시태그와 피드를 연결해서 연결테이블에 저장
             PostHashtag postHashtag = PostHashtag.builder()
                     .postId(post.getId())
