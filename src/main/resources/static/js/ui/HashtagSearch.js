@@ -7,8 +7,11 @@ class HashTagSearch {
     //검색결과를 표시할 컨테이너 생성
     this.$suggestionContainer = this.createContainer();
 
-    // 디바운스를 위한 타이머변수수
+    // 디바운스를 위한 타이머변수
     this.searchTimeout = null;
+
+    // 커서의 위치 저장
+    this.currentRange = null;
   }
 
   init() {
@@ -16,19 +19,24 @@ class HashTagSearch {
     this.$textarea.addEventListener("input", (e) => {
       //입력값을 읽어옴
       const text = e.target.value;
-      console.log(text);
 
       // 현재 커서를 읽어오기
       const currentCursorPosition = e.target.selectionStart;
 
-      const hastagMatch = this.findHashtagAtCursor(text, currentCursorPosition);
+      const hashtagMatch = this.findHashtagAtCursor(text, currentCursorPosition);
 
-      if (hastagMatch) {
+      if (hashtagMatch) {
         //서버에 검색요청 보내기 - 디바운스 적용
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
-          this.fetchHashtagSearch(hastagMatch.keword);
+          this.fetchHashtagSearch(hashtagMatch.keyword);
         }, 700);
+
+        // 검색할 해시태그 범위(start, end)를 저장
+        this.currentRange = {
+          start: hashtagMatch.start,
+          end: currentCursorPosition
+        };
       }
     });
   }
@@ -70,6 +78,9 @@ class HashTagSearch {
 
     // 생성된 목록을 보여주기
     this.$suggestionContainer.style.display = "block";
+
+    // 해시태그 클릭 시 이벤트
+    this.addClickEvents();
   }
 
   // 해시태그 추천 컨테이너 숨기기
@@ -85,11 +96,10 @@ class HashTagSearch {
   //해시태그 입력감지
   findHashtagAtCursor(text, currentCursorPosition) {
     const beforeCursorText = text.substring(0, currentCursorPosition);
-    console.log(beforeCursorText);
 
     const match = beforeCursorText.match(/#[\w가-힣]*$/);
 
-    return match ? { keword: match[0].substring(1) } : null;
+    return match ? { keyword: match[0].substring(1), start: match.index} : null;
   }
 
   // 해시태그 추천목록을 만들 컨테이너
@@ -99,6 +109,48 @@ class HashTagSearch {
     this.$textarea.parentElement.append($container);
     return $container;
   }
+
+/**
+   * 표시된 해시태그 후보(추천)들을 클릭했을 때,
+   * 해당 태그를 실제 textarea에 삽입하기 위한 이벤트를 등록한다.
+   */
+addClickEvents() {
+  this.$suggestionContainer
+    .querySelectorAll('.hashtag-item')
+    .forEach((item) => {
+      item.addEventListener('click', () => {
+        // 클릭 시, data-name 속성에 담긴 해시태그 이름 삽입
+        this.insertHashtag(item.dataset.name);
+      });
+    });
+}
+
+/**
+ * 추천 목록에서 해시태그를 선택(클릭)했을 때,
+ * 현재 textarea에 해당 태그를 삽입하는 함수
+ *
+ * @param {string} tagName - 선택된 태그 이름
+ */
+insertHashtag(tagName) {
+  const text = this.$textarea.value;
+
+  // 해시태그가 시작되기 전 구간
+  const beforeHashtag = text.substring(0, this.currentRange.start);
+
+  // 해시태그가 끝난 뒤 구간
+  const afterHashtag = text.substring(this.currentRange.end);
+
+  // 새롭게 구성된 문자열 (해시태그 이름 뒤에 공백 추가)
+  const newText = `${beforeHashtag}#${tagName} ${afterHashtag}`;
+
+  // textarea에 반영
+  this.$textarea.value = newText;
+
+  // 추천 목록 숨기고 포커스 유지
+  this.hideSuggestions();
+  this.$textarea.focus();
+}
+
 }
 
 export default HashTagSearch;
