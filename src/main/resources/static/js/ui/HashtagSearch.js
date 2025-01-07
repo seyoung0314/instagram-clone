@@ -6,6 +6,9 @@ class HashTagSearch {
 
     //검색결과를 표시할 컨테이너 생성
     this.$suggestionContainer = this.createContainer();
+
+    // 디바운스를 위한 타이머변수수
+    this.searchTimeout = null;
   }
 
   init() {
@@ -21,17 +24,19 @@ class HashTagSearch {
       const hastagMatch = this.findHashtagAtCursor(text, currentCursorPosition);
 
       if (hastagMatch) {
-        //서버에 검색요청 보내기
-        this.fetchHashtagSearch(hastagMatch.keword);
+        //서버에 검색요청 보내기 - 디바운스 적용
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => {
+          this.fetchHashtagSearch(hastagMatch.keword);
+        }, 700);
       }
     });
   }
 
   // 서버에 검색요청을 보내는 함수
   async fetchHashtagSearch(keword) {
-
     // 키워드가 있을때만 통신
-    if(!keword){
+    if (!keword) {
       return;
     }
 
@@ -43,9 +48,8 @@ class HashTagSearch {
   }
   // 서버에서 가져온 해시태그 화면에 렌더링하기
   renderSuggestions(hashtags) {
-
     // 검색결과가 없다면 컨테이너 숨기기기
-    if(!hashtags.length || !hashtags){
+    if (!hashtags.length || !hashtags) {
       this.hideSuggestions();
       return;
     }
@@ -69,8 +73,8 @@ class HashTagSearch {
   }
 
   // 해시태그 추천 컨테이너 숨기기
-  hideSuggestions(){
-    this.$suggestionContainer.style.display = 'none';
+  hideSuggestions() {
+    this.$suggestionContainer.style.display = "none";
   }
 
   /**
