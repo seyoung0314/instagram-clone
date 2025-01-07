@@ -13,6 +13,7 @@ import com.example.instagramclone.util.HashtagUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
 
     // 피드 목록 조회 중간처리 (전체조회 후 이미지 조회하는 방식)
+    @Transactional(readOnly = true)
     public List<PostResponse> findAllFeeds() {
         // 전체 피드 조회
         return postRepository.findAll()

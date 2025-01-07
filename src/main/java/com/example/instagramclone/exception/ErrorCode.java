@@ -18,6 +18,8 @@ public enum ErrorCode {
     FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "파일 크기가 제한을 초과했습니다."),
     TOO_MANY_FILES(HttpStatus.BAD_REQUEST, "파일 개수가 제한을 초과했습니다."),
 
+    // 해시태그 검색관련
+    INVALID_HASHTAG_SEARCH(HttpStatus.BAD_REQUEST, "잘못된 해시태그 검색 요청입니다."),
     ;
 
     private final HttpStatus status;
