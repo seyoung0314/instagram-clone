@@ -78,13 +78,8 @@ public class GlobalExceptionHandler {
 
         log.error("MemberException occurred: {}", e.getMessage(), e);
 
-        ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(e.getErrorCode().getStatus().value())
-                .error(e.getErrorCode().name())
-                .message(e.getMessage())
-                .path(request.getRequestURI())
-                .build();
+        ErrorResponse response = createErrorResponse
+                (e, request, e.getErrorCode().getStatus(), e.getMessage());
 
         return ResponseEntity
                 .status(e.getErrorCode().getStatus())
