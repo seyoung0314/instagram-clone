@@ -70,4 +70,24 @@ public class GlobalExceptionHandler {
                 .status(e.getErrorCode().getStatus())
                 .body(response);
     }
+
+    // 회원 관련
+    @ExceptionHandler(MemberException.class)
+    public ResponseEntity<ErrorResponse> handleMemberException(
+            MemberException e, HttpServletRequest request) {
+
+        log.error("MemberException occurred: {}", e.getMessage(), e);
+
+        ErrorResponse response = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(e.getErrorCode().getStatus().value())
+                .error(e.getErrorCode().name())
+                .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(response);
+    }
 }
