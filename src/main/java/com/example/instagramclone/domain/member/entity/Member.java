@@ -1,4 +1,4 @@
-package com.example.instagramclone.domain.member;
+package com.example.instagramclone.domain.member.entity;
 
 import lombok.*;
 
