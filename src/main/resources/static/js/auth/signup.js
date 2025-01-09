@@ -95,6 +95,7 @@ function initSignUp() {
 
   // 입력값을 검증하고 에러메세지를 렌더링하는 함수
   async function validateField($input) {
+    removeErrorMessage($input.closest('.form-field'));
     // 1. 빈값체크
     //어떤 태그의 input인지 확인
     const fieldName = $input.name;
@@ -112,7 +113,7 @@ function initSignUp() {
         await validateFieldEmailOrPhone($formField, inputValue);
       } else if (fieldName === "password") {
         validateFieldPassword($formField, inputValue);
-      } else if (fieldName === "name") {
+      } else if (fieldName === "username") {
         await validateUsername($formField, inputValue);
       }
     }
@@ -261,22 +262,22 @@ function initSignUp() {
     e.preventDefault(); // 폼 전송 시 새로고침 방지
 
     //사용자가 입력한 모든 입력값 읽어오기
-    // const emailOrPhone = document.querySelector('input[name="email"]').value;
-    // const name = document.querySelector('input[name="name"]').value;
-    // const username = document.querySelector('input[name="username"]').value;
-    // const password = document.querySelector('input[name="password"]').value;
+    const emailOrPhone = document.querySelector('input[name="email"]').value;
+    const name = document.querySelector('input[name="name"]').value;
+    const username = document.querySelector('input[name="username"]').value;
+    const password = document.querySelector('input[name="password"]').value;
 
-    // const payload = {
-    //   emailOrPhone: emailOrPhone,
-    //   name: name,
-    //   username: username,
-    //   password: password,
-    // };
+    const payload = {
+      emailOrPhone: emailOrPhone,
+      name: name,
+      username: username,
+      password: password,
+    };
 
-    // console.log(payload);
+    console.log(payload);
 
     // //서버전송
-    // fetchToSighup(payload);
+    fetchToSighup(payload);
   });
 }
 
@@ -290,7 +291,13 @@ async function fetchToSighup(payload) {
 
   const data = await response.json();
 
-  alert(data.message);
+  if(response.ok){
+    alert(data.message);
+    window.location.reload();
+  }else{
+    alert(data.message);
+  }
+  
 }
 
 // 메인 실행코드
