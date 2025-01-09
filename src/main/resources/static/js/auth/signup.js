@@ -58,16 +58,26 @@ function initSignUp() {
       if (fieldName === "email") {
         validateFieldEmailOrPhone($formField, inputValue);
       } else if (fieldName === "password") {
-        validateFieldPassword($formField,inputValue);
-      }else if (fieldName === "name") {
-        validateUsername($formField,inputValue);
+        validateFieldPassword($formField, inputValue);
+      } else if (fieldName === "name") {
+        validateUsername($formField, inputValue);
       }
     }
   }
 
+  // 서버에 중복체크 api 요청을 보내고 결과를 반환
+  async function fetchToCheckDuplicate(type, value, $formField) {
+    const response = await fetch(
+      `/api/auth/check-duplicate?type=${type}&value=${value}`
+    );
+    const data = await response.json();
+    if (!data.available) {
+      showError($formField, data.message);
+    }
+  }
 
   // 이메일 또는 전화번호를 상세검증
-  function validateFieldEmailOrPhone($formField, inputValue) {
+  async function validateFieldEmailOrPhone($formField, inputValue) {
     // 이메일 패턴체크
     if (inputValue.includes("@")) {
       // 패턴체크
@@ -75,6 +85,11 @@ function initSignUp() {
         showError($formField, ValidationRules.email.message);
         //중복체크 (서버통신)
       } else {
+        const data = await fetchToCheckDuplicate(
+          "email",
+          inputValue,
+          $formField
+        );
       }
       //전화번호 패턴체크
     } else {
@@ -85,6 +100,7 @@ function initSignUp() {
         showError($formField, ValidationRules.phone.message);
         //중복체크 (서버통신)
       } else {
+        const data = await fetchToCheckDuplicate("phone", numbers, $formField);
       }
     }
   }
@@ -98,47 +114,48 @@ function initSignUp() {
     //강도 체크
     const strenth = checkPasswordStrength(inputValue);
     switch (strenth) {
-      case "weak":  // 에러
-      showError($formField,ValidationRules.password.messages.weak);
-      break;
+      case "weak": // 에러
+        showError($formField, ValidationRules.password.messages.weak);
+        break;
       case "medium":
         showPasswordFeedback(
           $formField,
           ValidationRules.password.messages.medium,
-        'warning');
+          "warning"
+        );
         break;
       case "strong":
         showPasswordFeedback(
           $formField,
           ValidationRules.password.messages.strong,
-        'succese');
+          "succese"
+        );
         break;
     }
   }
-  
-/**
- * 비밀번호 강도 피드백 표시
- */
-function showPasswordFeedback($formField, message, type) {
-  const $feedback = document.createElement('span');
-  $feedback.className = `password-feedback ${type}`;
-  $feedback.textContent = message;
-  $formField.append($feedback);
-}
 
-
-/**
- * 사용자 이름(username) 필드 검증
- */
-function validateUsername($formField, inputValue) {
-
-  if (!ValidationRules.username.pattern.test(inputValue)) {
-    showError($formField, ValidationRules.username.message);
+  /**
+   * 비밀번호 강도 피드백 표시
+   */
+  function showPasswordFeedback($formField, message, type) {
+    const $feedback = document.createElement("span");
+    $feedback.className = `password-feedback ${type}`;
+    $feedback.textContent = message;
+    $formField.append($feedback);
   }
 
-  // 중복검사
+  /**
+   * 사용자 이름(username) 필드 검증
+   */
+  async function validateUsername($formField, inputValue) {
+    if (!ValidationRules.username.pattern.test(inputValue)) {
+      showError($formField, ValidationRules.username.message);
+    }else{
+      const data = await fetchToCheckDuplicate("username", inputValue, $formField);
+    }
 
-}
+    // 중복검사
+  }
   /**
    * 에러 메시지를 표시하고, 필드에 error 클래스를 부여
    */
@@ -158,7 +175,7 @@ function validateUsername($formField, inputValue) {
 
     $formField.classList.remove("error");
     const error = $formField.querySelector(".error-message");
-    const feedback = $formField.querySelector('.password-feedback');
+    const feedback = $formField.querySelector(".password-feedback");
     if (error) error.remove();
     if (feedback) feedback.remove();
   }
