@@ -1,6 +1,14 @@
 import { ValidationRules, checkPasswordStrength } from "./validation.js";
 import { debounce } from "../util/debounce.js";
 
+// 모든 input별로 이전 값을 저장할 객체를 만듦
+const previousValues = {
+  emailOrPhone: '',
+  name: '',
+  username: '',
+  password: ''
+};
+
 function initSignUp() {
   // form submit이벤트
   const $form = document.querySelector(".auth-form");
@@ -21,11 +29,13 @@ function initSignUp() {
   // 디바운스가 걸린 validateField 함수
   const debouncedValidate = debounce(async ($input) => {
     await validateField($input);
+    validateForm();
+      
   }, 700);
 
   const handleInput = async ($input) => {
-    removeErrorMessage($input.closest(".form-field"));
-    await debouncedValidate($input); //입력값 검증 함수 호출
+    // removeErrorMessage($input.closest(".form-field"));
+    debouncedValidate($input); //입력값 검증 함수 호출
     // debounce(($input) => {
     //   console.log("함수");
     //   validateField($input);
@@ -38,17 +48,29 @@ function initSignUp() {
   // }
   Object.values($inputs).forEach(($input) => {
     $input.addEventListener("input", async (e) => {
-      $submitButton.disabled = true;
       const $formField = $input.closest(".form-field");
+      removeErrorMessage($input.closest('.form-field'));
       await handleInput($input);
-      if (validateForm()) {
-        $submitButton.disabled = false;
-      }
     });
 
     // 포커스를 잃었을 때 이벤트
-    $input.addEventListener("blur", (e) => {
-      handleInput($input);
+    $input.addEventListener("blur", async (e) => {
+
+      const fieldName = $input.name;
+      const currentValue = $input.value.trim();
+      // 빈값이거나 값이 바뀐 적이 있을 때만 혹은 이전 값이랑 달라졌을 때만 검증
+      console.log("currentValue : "+ currentValue);
+      console.log("previousValues : "+ previousValues[fieldName]);
+      
+      if (!currentValue || previousValues[fieldName] !== currentValue) {
+        console.log("변경");
+        
+        previousValues[fieldName] = currentValue; // 이전 값 갱신
+        removeErrorMessage($input.closest('.form-field'));
+        // 디바운스가 아니라, blur 시점에는 바로 검증할 수도 있음
+        validateField($input);
+      }
+      
     });
   });
 
@@ -56,8 +78,6 @@ function initSignUp() {
     let flag = true;
     Object.values($inputs).forEach(($input) => {
       const $formField = $input.closest(".form-field");
-      console.log($input.value);
-      console.log($formField.classList);
 
       if (!$input.value) {
         console.log("값이 덜 입력됨");
@@ -70,7 +90,7 @@ function initSignUp() {
         flag = false; // 폼 제출을 막습니다.
       }
     });
-    return flag;
+    $submitButton.disabled = !flag;
   }
 
   // 입력값을 검증하고 에러메세지를 렌더링하는 함수
@@ -89,11 +109,11 @@ function initSignUp() {
       // 2. 상세체크(패턴검증, 중복검증)
       // 2-1. 이메일, 전화번호 검증
       if (fieldName === "email") {
-        validateFieldEmailOrPhone($formField, inputValue);
+        await validateFieldEmailOrPhone($formField, inputValue);
       } else if (fieldName === "password") {
         validateFieldPassword($formField, inputValue);
       } else if (fieldName === "name") {
-        validateUsername($formField, inputValue);
+        await validateUsername($formField, inputValue);
       }
     }
   }
@@ -143,6 +163,7 @@ function initSignUp() {
     //길이 확인
     if (!ValidationRules.password.patterns.length.test(inputValue)) {
       showError($formField, ValidationRules.password.messages.length);
+      return;
     }
     //강도 체크
     const strenth = checkPasswordStrength(inputValue);
@@ -196,18 +217,21 @@ function initSignUp() {
   /**
    * 에러 메시지를 표시하고, 필드에 error 클래스를 부여
    */
-  function showError($formField, message) {
+    function showError($formField, message) {
     $formField.classList.add("error");
     const $errorSpan = document.createElement("span");
     $errorSpan.classList.add("error-message");
     $errorSpan.textContent = message;
     $formField.append($errorSpan);
+    console.log("클래스 추가 후:", $formField.classList); // 추가 후 확인
   }
 
   /**
    * 에러 및 비밀번호 피드백을 제거한다.
    */
   function removeErrorMessage($formField) {
+    console.log("삭제");
+    
     $formField.classList.remove("error");
     const error = $formField.querySelector(".error-message");
     const feedback = $formField.querySelector(".password-feedback");
