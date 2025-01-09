@@ -5,6 +5,9 @@ function initSignUp() {
   // form submit이벤트
   const $form = document.querySelector(".auth-form");
 
+  const $submitButton = $form.querySelector(".auth-button");
+  $submitButton.disabled = true;
+
   // 입력 태그들을 읽어서 객체로 관리
   const $inputs = {
     emailOrPhone: $form.querySelector('input[name="email"]'),
@@ -13,12 +16,16 @@ function initSignUp() {
     password: $form.querySelector('input[name="password"]'),
   };
 
-  // 디바운스가 걸린 validateField 함수
-  const debouncedValidate = debounce(validateField, 700);
+  createPasswordToggle($inputs.password);
 
-  const handleInput = ($input) => {
+  // 디바운스가 걸린 validateField 함수
+  const debouncedValidate = debounce(async ($input) => {
+    await validateField($input);
+  }, 700);
+
+  const handleInput = async ($input) => {
     removeErrorMessage($input.closest(".form-field"));
-    debouncedValidate($input); //입력값 검증 함수 호출
+    await debouncedValidate($input); //입력값 검증 함수 호출
     // debounce(($input) => {
     //   console.log("함수");
     //   validateField($input);
@@ -30,8 +37,13 @@ function initSignUp() {
 
   // }
   Object.values($inputs).forEach(($input) => {
-    $input.addEventListener("input", (e) => {
-      handleInput($input);
+    $input.addEventListener("input", async (e) => {
+      $submitButton.disabled = true;
+      const $formField = $input.closest(".form-field");
+      await handleInput($input);
+      if (validateForm()) {
+        $submitButton.disabled = false;
+      }
     });
 
     // 포커스를 잃었을 때 이벤트
@@ -40,8 +52,29 @@ function initSignUp() {
     });
   });
 
+  function validateForm() {
+    let flag = true;
+    Object.values($inputs).forEach(($input) => {
+      const $formField = $input.closest(".form-field");
+      console.log($input.value);
+      console.log($formField.classList);
+
+      if (!$input.value) {
+        console.log("값이 덜 입력됨");
+
+        flag = false; // 폼 제출을 막습니다.
+      }
+      if ($formField.classList.contains("error")) {
+        console.log("에러메세지가 있는 상태");
+
+        flag = false; // 폼 제출을 막습니다.
+      }
+    });
+    return flag;
+  }
+
   // 입력값을 검증하고 에러메세지를 렌더링하는 함수
-  function validateField($input) {
+  async function validateField($input) {
     // 1. 빈값체크
     //어떤 태그의 input인지 확인
     const fieldName = $input.name;
@@ -150,8 +183,12 @@ function initSignUp() {
   async function validateUsername($formField, inputValue) {
     if (!ValidationRules.username.pattern.test(inputValue)) {
       showError($formField, ValidationRules.username.message);
-    }else{
-      const data = await fetchToCheckDuplicate("username", inputValue, $formField);
+    } else {
+      const data = await fetchToCheckDuplicate(
+        "username",
+        inputValue,
+        $formField
+      );
     }
 
     // 중복검사
@@ -171,13 +208,28 @@ function initSignUp() {
    * 에러 및 비밀번호 피드백을 제거한다.
    */
   function removeErrorMessage($formField) {
-    console.log("지움");
-
     $formField.classList.remove("error");
     const error = $formField.querySelector(".error-message");
     const feedback = $formField.querySelector(".password-feedback");
     if (error) error.remove();
     if (feedback) feedback.remove();
+  }
+
+  /**
+   * 비밀번호 표시/숨기기 토글 기능 생성
+   */
+  function createPasswordToggle(passwordInput) {
+    const $toggle = document.querySelector(".password-toggle");
+
+    passwordInput.addEventListener("input", (e) => {
+      $toggle.style.display = e.target.value.length > 0 ? "block" : "none";
+    });
+
+    $toggle.addEventListener("click", () => {
+      const isCurrentlyPassword = passwordInput.type === "password";
+      passwordInput.type = isCurrentlyPassword ? "text" : "password";
+      $toggle.textContent = isCurrentlyPassword ? "숨기기" : "패스워드 표시";
+    });
   }
 
   // form submit 이벤트
