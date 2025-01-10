@@ -1,4 +1,4 @@
-package com.example.instagramclone.domain.member.dto;
+package com.example.instagramclone.domain.member.dto.request;
 
 import com.example.instagramclone.domain.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
