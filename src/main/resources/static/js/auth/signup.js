@@ -34,12 +34,7 @@ function initSignUp() {
   }, 700);
 
   const handleInput = async ($input) => {
-    // removeErrorMessage($input.closest(".form-field"));
     debouncedValidate($input); //입력값 검증 함수 호출
-    // debounce(($input) => {
-    //   console.log("함수");
-    //   validateField($input);
-    // }, 700)();
   };
 
   // form 입력창 4개에 입력이벤트 바인딩
@@ -48,7 +43,6 @@ function initSignUp() {
   // }
   Object.values($inputs).forEach(($input) => {
     $input.addEventListener("input", async (e) => {
-      const $formField = $input.closest(".form-field");
       removeErrorMessage($input.closest('.form-field'));
       await handleInput($input);
     });
@@ -58,13 +52,10 @@ function initSignUp() {
 
       const fieldName = $input.name;
       const currentValue = $input.value.trim();
+
       // 빈값이거나 값이 바뀐 적이 있을 때만 혹은 이전 값이랑 달라졌을 때만 검증
-      console.log("currentValue : "+ currentValue);
-      console.log("previousValues : "+ previousValues[fieldName]);
-      
       if (!currentValue || previousValues[fieldName] !== currentValue) {
-        console.log("변경");
-        
+
         previousValues[fieldName] = currentValue; // 이전 값 갱신
         removeErrorMessage($input.closest('.form-field'));
         // 디바운스가 아니라, blur 시점에는 바로 검증할 수도 있음
@@ -139,7 +130,7 @@ function initSignUp() {
         showError($formField, ValidationRules.email.message);
         //중복체크 (서버통신)
       } else {
-        const data = await fetchToCheckDuplicate(
+        await fetchToCheckDuplicate(
           "email",
           inputValue,
           $formField
@@ -154,7 +145,7 @@ function initSignUp() {
         showError($formField, ValidationRules.phone.message);
         //중복체크 (서버통신)
       } else {
-        const data = await fetchToCheckDuplicate("phone", numbers, $formField);
+        await fetchToCheckDuplicate("phone", numbers, $formField);
       }
     }
   }
@@ -206,7 +197,7 @@ function initSignUp() {
     if (!ValidationRules.username.pattern.test(inputValue)) {
       showError($formField, ValidationRules.username.message);
     } else {
-      const data = await fetchToCheckDuplicate(
+      await fetchToCheckDuplicate(
         "username",
         inputValue,
         $formField
