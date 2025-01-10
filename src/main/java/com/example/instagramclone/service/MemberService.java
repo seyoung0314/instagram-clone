@@ -6,6 +6,7 @@ import com.example.instagramclone.domain.member.dto.response.DuplicateCheckRespo
 import com.example.instagramclone.domain.member.entity.Member;
 import com.example.instagramclone.exception.ErrorCode;
 import com.example.instagramclone.exception.MemberException;
+import com.example.instagramclone.jwt.JwtTokenProvider;
 import com.example.instagramclone.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,8 @@ import java.util.Map;
 @Transactional // 트랜잭션 처리
 @RequiredArgsConstructor
 public class MemberService {
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     //패스워드 암호화
     private final PasswordEncoder passwordEncoder;
@@ -123,10 +126,11 @@ public class MemberService {
             throw new MemberException(ErrorCode.INVALID_PASSWORD);
         }
 
-        // 로그인 성공
+        // 로그인 성공 (엑세스 토큰 포함)
         return Map.of(
                 "message", "로그인에 성공했습니다.",
-                "username", foundMember.getUsername()
+                "username", foundMember.getUsername(),
+                "accessToken", jwtTokenProvider.createAccessToken(username)
         );
     }
 }
