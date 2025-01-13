@@ -1,4 +1,4 @@
-import { fetchWithAuth } from "../ui/api.js";
+import { fetchWithAuth } from "../util/api.js";
 import CarouselManager from "../ui/CarouselManager.js";
 import HashtagSearch from "../ui/HashtagSearch.js";
 
