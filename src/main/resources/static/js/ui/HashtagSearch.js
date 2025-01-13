@@ -1,3 +1,5 @@
+import { fetchWithAuth } from "../util/api.js";
+
 class HashTagSearch {
   constructor($textarea) {
     // console.log("해시태그 객체 생성");
@@ -45,10 +47,11 @@ class HashTagSearch {
   async fetchHashtagSearch(keword) {
     // 키워드가 있을때만 통신
     if (!keword) {
+      this.hideSuggestions();
       return;
     }
 
-    const response = await fetch(`/api/hashtags/search?keyword=${keword}`);
+    const response = await fetchWithAuth(`/api/hashtags/search?keyword=${keword}`);
     const hashtags = await response.json();
 
     //서버에서 가져온 해시태그정보 렌더링
