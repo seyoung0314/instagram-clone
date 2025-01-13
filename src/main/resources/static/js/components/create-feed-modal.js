@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "../ui/api.js";
 import CarouselManager from "../ui/CarouselManager.js";
 import HashtagSearch from "../ui/HashtagSearch.js";
 
@@ -70,11 +71,8 @@ async function fetchFeed() {
 
   setTimeout(async () => {
     // 서버에 POST요청 전송 (토큰 포함)
-    const response = await fetch("/api/posts", {
+    const response = await fetchWithAuth("/api/posts", {
       method: "POST",
-      headers : {
-        'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
-      },
       body: formData,
     });
 
