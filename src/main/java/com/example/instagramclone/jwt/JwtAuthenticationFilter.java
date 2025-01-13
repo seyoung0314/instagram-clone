@@ -59,6 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Spring Security 에게 접근을 허용하라고 명령
             // Authentication 객체 생성 → SecurityContextHolder에 저장
             Authentication authentication =
+                    /*
+                        파라미터(
+                        1. 인증된 사용자의 이름이 저장 - 컨트롤러들이 빼서 사용가능
+                        2. 비밀번호를 저장(일반적으론 저장하지 않음)
+                        3. 권한정보 (나중에 인가 처리 시 사용)
+                     */
                     new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

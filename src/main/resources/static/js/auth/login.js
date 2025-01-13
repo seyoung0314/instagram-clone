@@ -27,7 +27,14 @@ async function handleLogin(e) {
   });
   const data = await response.json();
   alert(data.message);
-  
+
+  // 로그인 성공할 시 처리
+  if(response.ok){
+  //홈화면으로 이동
+    window.location.href = "/";
+  }else{
+    alert(data.message);
+  }
 }
 
 function initLogin() {
