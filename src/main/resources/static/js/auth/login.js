@@ -30,6 +30,9 @@ async function handleLogin(e) {
 
   // 로그인 성공할 시 처리
   if(response.ok){
+    // 브라우저 저장소에 토큰을 저장시킴
+    localStorage.setItem('accessToken',data.accessToken);
+
   //홈화면으로 이동
     window.location.href = "/";
   }else{

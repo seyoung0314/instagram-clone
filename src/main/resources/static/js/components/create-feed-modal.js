@@ -69,9 +69,12 @@ async function fetchFeed() {
   setLoading(true);
 
   setTimeout(async () => {
-    // 서버에 POST요청 전송
+    // 서버에 POST요청 전송 (토큰 포함)
     const response = await fetch("/api/posts", {
       method: "POST",
+      headers : {
+        'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+      },
       body: formData,
     });
 

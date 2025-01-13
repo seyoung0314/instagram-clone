@@ -163,7 +163,16 @@ async function renderFeed() {
 
 //피드를 서버로부터 불러오는 함수
 async function fetchFeed() {
-  const response = await fetch("/api/posts");
+
+const token = localStorage.getItem('accessToken');
+
+  // 서버요청 시 토큰을 헤더에 포함해서 요청해야 함
+  const response = await fetch("/api/posts",{
+    method : 'GET',
+    headers : {
+      'Authorization' : `Bearer ${token}`
+    }
+  });
 
   if (!response.ok) {
     alert("피드목록을 불러오는 데 실패했습니다.");
