@@ -1,6 +1,7 @@
 package com.example.instagramclone.domain.post.entity;
 
 
+import com.example.instagramclone.domain.member.entity.Member;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,4 +21,7 @@ public class Post {
     private LocalDateTime createdAt;  // created_at 필드
     private LocalDateTime updatedAt;  // updated_at 필드
     private List<PostImage> images;
+
+    // member 객체 포함
+    private Member member;
 }

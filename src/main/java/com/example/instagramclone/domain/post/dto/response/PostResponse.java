@@ -20,7 +20,8 @@ public class PostResponse {
     @JsonProperty("feed_id")
     private Long id;
     private String content;
-    private String writer;
+    private String username;
+    private String profileImageUrl;
     private List<PostImageResponse> images;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -29,6 +30,8 @@ public class PostResponse {
     public static PostResponse from(Post feed) {
         return PostResponse.builder()
                 .id(feed.getId())
+                .username(feed.getMember().getUsername())
+                .profileImageUrl(feed.getMember().getProfileImageUrl())
                 .content(feed.getContent())
                 .images(
                         feed.getImages()
