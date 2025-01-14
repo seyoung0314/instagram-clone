@@ -7,9 +7,9 @@
     <!--    insert문에는 특별하게 auto_increment로 지정한 key를 지정해줌-->
     <insert id="saveFeed" keyProperty="id" useGeneratedKeys="true">
         INSERT INTO posts
-        (content, writer)
+        (content, member_id)
         VALUES
-        (#{content}, #{writer})
+        (#{content}, #{memberId})
     </insert>
 
 

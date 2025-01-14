@@ -17,9 +17,6 @@ import java.util.List;
 @ToString
 public class PostCreate {
 
-    @NotBlank(message = "작성자 정보는 필수입니다.")
-    private String writer;
-
     @Size(max = 2200, message = "피드내용은 최대 2200자입니다.")
     private String content;
     // 이미지 목록
@@ -27,7 +24,6 @@ public class PostCreate {
 
     public Post toEntity() {
         return Post.builder()
-                .writer(this.writer)
                 .content(this.content)
                 .build();
     }

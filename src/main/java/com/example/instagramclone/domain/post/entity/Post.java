@@ -15,7 +15,7 @@ import java.util.List;
 public class Post {
     private Long id;          // id 필드 (BIGINT)
     private String content;   // content 필드 (TEXT)
-    private String writer;    // writer 필드 (VARCHAR(100))
+    private Long memberId;    // memberId 필드 (BIGINT)
     private int viewCount;    // view_count 필드 (INT)
     private LocalDateTime createdAt;  // created_at 필드
     private LocalDateTime updatedAt;  // updated_at 필드
