@@ -3,7 +3,7 @@ import { getCurrentUser } from "../util/auth.js";
 async function renderMe() {
   // 서버에서 로그인한 사용자 정보 요청하기
   const currentUser = await getCurrentUser();
-  console.log('logged in user: ', userInfo);
+  console.log('logged in user: ', currentUser);
   if (currentUser) {
     const $user = document.querySelector('.current-user');
     // 프로필 이미지 업데이트

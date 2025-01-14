@@ -4,7 +4,7 @@ import initStories from "./components/stories.js";
 import initCreateFeedModal from "./components/create-feed-modal.js";
 import initFeed from './components/feed.js';
 import initMoreMenu from "./components/more-menu.js";
-import initSuggestions from "./components/more-menu.js";
+import initSuggestions from "./components/suggestions.js";
 
 // 모든 태그가 랜더링되면 실행되는 이벤트
 document.addEventListener("DOMContentLoaded", () => {
