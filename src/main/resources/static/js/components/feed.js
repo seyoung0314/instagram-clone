@@ -24,7 +24,7 @@ function createFeedItem({ username,profileImageUrl, content, images, createdAt }
             <img src="${profileImageUrl || `/images/default-profile.svg`}" alt="프로필 이미지">
           </div>
           <div class="post-user-details">
-            <a href="#" class="post-username">
+            <a href="${username}" class="post-username">
                 ${username}
             </a>
           </div>
@@ -214,7 +214,7 @@ function truncateContent(writer, content, maxLength = 20) {
   // 1. 먼저 텍스트 길이 체크
   if (content.length <= maxLength) {
     return `
-      <a href="#" class="post-username">${writer}</a>
+      <a href="${writer}" class="post-username">${writer}</a>
       <span class="post-caption">${convertHashtagsToLinks(content)}</span>
     `;
   }
@@ -223,7 +223,7 @@ function truncateContent(writer, content, maxLength = 20) {
   const truncatedContent = content.substring(0, maxLength);
 
   return `
-    <a href="#" class="post-username">${writer}</a>
+    <a href="${writer}" class="post-username">${writer}</a>
     <span class="post-caption post-caption-truncated">
       <span class="truncated-text">${convertHashtagsToLinks(truncatedContent)}...</span>
       <span class="full-text" style="display: none;">${convertHashtagsToLinks(content)}</span>

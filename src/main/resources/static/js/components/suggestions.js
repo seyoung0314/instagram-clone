@@ -11,12 +11,17 @@ async function renderMe() {
     if ($profileImg) {
       $profileImg.src = currentUser.profileImageUrl ?? '/images/default-profile.svg';
       $profileImg.alt = `${currentUser.username}의 프로필 이미지`;
+
+      //프로필 페이지 링크
+      $profileImg.parentElement.setAttribute('href',`/${currentUser.username}`)
     }
     // 사용자명과 실제 이름 업데이트
     const $username = $user.querySelector('.username');
     const $name = $user.querySelector('.name');
     $username.textContent = currentUser.username;
     $name.textContent = currentUser.name;
+    $name.setAttribute('href',`/${currentUser.username}`);
+    $username.setAttribute('href',`/${currentUser.username}`);
   }
 }
 function initSuggestions() {

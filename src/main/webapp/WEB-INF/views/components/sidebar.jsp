@@ -51,7 +51,7 @@
       <span class="menu-text">만들기</span>
     </a>
 
-    <a href="/profile" class="menu-item">
+    <a href="/profile" class="menu-item profile-item">
       <div class="profile-image">
         <img src="/images/default-profile.svg" alt="프로필">
       </div>
