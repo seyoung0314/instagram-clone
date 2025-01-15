@@ -2,12 +2,15 @@ package com.example.instagramclone.controller.rest;
 
 import com.example.instagramclone.domain.member.dto.response.MeResponse;
 import com.example.instagramclone.domain.member.dto.response.ProfileHeaderResponse;
+import com.example.instagramclone.domain.post.dto.response.ProfilePostResponse;
 import com.example.instagramclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/profiles")
@@ -34,6 +37,17 @@ public class ProfileController {
         ProfileHeaderResponse responseData = profileService.getProfileHeader(username);
 
         return ResponseEntity.ok().body(responseData);
+
+    }
+
+    // 사용자 프로필 페이지 헤더 데이터를 전송하는 api
+    @GetMapping("/{username}/posts")
+    public ResponseEntity<List<ProfilePostResponse>> getProfilePost(
+            @PathVariable String username
+    ){
+        List<ProfilePostResponse> profilePosts = profileService.findProfilePosts(username);
+
+        return ResponseEntity.ok().body(profilePosts);
 
     }
 
