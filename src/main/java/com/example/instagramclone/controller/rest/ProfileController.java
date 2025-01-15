@@ -30,7 +30,6 @@ public class ProfileController {
     }
 
     // 사용자 프로필 페이지 헤더 데이터를 전송하는 api
-    @GetMapping("/{username}")
     public ResponseEntity<ProfileHeaderResponse> getProfileHeader(
             @PathVariable String username
     ){
