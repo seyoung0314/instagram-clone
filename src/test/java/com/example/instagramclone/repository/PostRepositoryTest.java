@@ -12,6 +12,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,7 +41,6 @@ class PostRepositoryTest {
         //given - 테스트를 위해 주어지는 데이터
         Post givenPost = Post.builder()
                 .content("테스트 컨텐츠 입니다.")
-                .writer("admin")
                 .build();
 
         //when - 실제 실행될 테스트 핵심코드
@@ -60,7 +60,6 @@ class PostRepositoryTest {
         for (int i = 0; i < 3; i++) {
             Post givenPost = Post.builder()
                     .content("테스트 컨텐츠 입니다." + i)
-                    .writer("admin" + i)
                     .build();
             postRepository.saveFeed(givenPost);
         }
@@ -71,7 +70,6 @@ class PostRepositoryTest {
         feedList.forEach(System.out::println);
 
         assertThat(feedList.size()).isEqualTo(3);
-        assertThat(feedList.get(0).getWriter()).isEqualTo("admin2");
     }
 
     @Test
@@ -84,7 +82,6 @@ class PostRepositoryTest {
         //ㅠㅣ드 1개 생성
         Post feed = Post.builder()
                 .content("테스트 컨텐츠 입니다.")
-                .writer("admin")
                 .build();
 
         postRepository.saveFeed(feed);
@@ -113,6 +110,19 @@ class PostRepositoryTest {
         assertThat(imageList.size()).isEqualTo(2);
         assertThat(imageList.get(0).getImageOrder()).isEqualTo(1);
         assertThat(imageList.get(1).getImageUrl()).contains("second");
+    }
+
+    @Test
+    @DisplayName("단일 피드를 조회하면 피드의 내용, 작성자 정보, 피드이미지들이 조회된다.")
+    void detailFeedTest() {
+        //given
+
+        Long postId = 73L;
+        //when
+
+        Post post = postRepository.findPostDetailById(postId).orElseThrow();
+        //then
+        System.out.println(post);
     }
 
     @AfterEach
