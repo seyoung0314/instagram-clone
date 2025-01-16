@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/profile.css">
     <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="/css/feed.css">
+    <link rel="stylesheet" href="/css/feed-detail-modal.css">
 
     <!-- JavaScript -->
     <script src="/js/components/profile-page.js" type="module" defer></script>
@@ -99,12 +101,7 @@
     </main>
 </div>
 
-<!-- Post Modal -->
-<div class="post-modal" style="display: none;">
-    <!-- Modal content will be dynamically added -->
-</div>
-
-
 <%@ include file="./create-post-modal.jsp" %>
+<%@ include file="./feed-detail-modal.jsp" %>
 </body>
 </html>
