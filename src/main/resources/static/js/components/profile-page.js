@@ -3,6 +3,7 @@ import initCreateFeedModal from "./create-feed-modal.js";
 import initMoreMenu from "./more-menu.js";
 import initSideBar from "./side-bar.js";
 import { getCurrentUser } from "../util/auth.js";
+import initFeedDetailModal from "./feed-detail-modal.js";
 
 const $profileImageContainer = document.querySelector(
   ".profile-image-container"
@@ -198,4 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initProfileHeader(); // 프로필 페이지 헤더 관련
   initProfileFeeds(); // 프로필 페이지 피드 관련
   initChangeProfileImage(); // 프로필 이미지 변경 관련
+
+  initFeedDetailModal(); // 포스트 상세보기 관련
 });
