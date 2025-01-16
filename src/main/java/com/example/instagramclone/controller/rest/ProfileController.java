@@ -9,8 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/profiles")
@@ -23,7 +25,7 @@ public class ProfileController {
     @GetMapping("/me")
     public ResponseEntity<MeResponse> getCurrentUser(
             @AuthenticationPrincipal String username
-    ){
+    ) {
         MeResponse responseDto = profileService.getLoggedInUser(username);
 
         return ResponseEntity.ok().body(responseDto);
@@ -32,7 +34,7 @@ public class ProfileController {
     // 사용자 프로필 페이지 헤더 데이터를 전송하는 api
     public ResponseEntity<ProfileHeaderResponse> getProfileHeader(
             @PathVariable String username
-    ){
+    ) {
         ProfileHeaderResponse responseData = profileService.getProfileHeader(username);
 
         return ResponseEntity.ok().body(responseData);
@@ -43,11 +45,25 @@ public class ProfileController {
     @GetMapping("/{username}/posts")
     public ResponseEntity<List<ProfilePostResponse>> getProfilePost(
             @PathVariable String username
-    ){
+    ) {
         List<ProfilePostResponse> profilePosts = profileService.findProfilePosts(username);
 
         return ResponseEntity.ok().body(profilePosts);
 
+    }
+
+    // 프로필 사진 업로드 api
+    @PutMapping("/profile-image")
+    public ResponseEntity<?> updateProfile(
+            @RequestParam MultipartFile profileImage,
+            @AuthenticationPrincipal String username
+    ) {
+        String imageUrl = profileService.updateProfileImage(profileImage, username);
+
+        return ResponseEntity.ok().body(Map.of(
+                "imgaeUrl", imageUrl,
+                "message", "image upload success"
+        ));
     }
 
 }
