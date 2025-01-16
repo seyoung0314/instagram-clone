@@ -4,6 +4,10 @@ import initMoreMenu from "./more-menu.js";
 import initSideBar from "./side-bar.js";
 import { getCurrentUser } from "../util/auth.js";
 
+const $profileImageContainer = document.querySelector(
+  ".profile-image-container"
+);
+
 function getPageUsername() {
   const url = window.location.pathname;
   return url.substring(1);
@@ -17,6 +21,8 @@ async function initProfileHeader() {
   //서버에서 프로필 헤더 정보 요청하기
   const response = await fetchWithAuth(`/api/profiles/${username}`);
   const profileHeader = await response.json();
+
+  console.log(profileHeader);
 
   //렌더링
   renderProfileHeader(profileHeader);
@@ -82,7 +88,7 @@ async function renderProfileHeader({
 }
 
 function renderProfileFeeds(feedList) {
-  const $gridContainer = document.querySelector('.posts-grid');
+  const $gridContainer = document.querySelector(".posts-grid");
 
   // 그리드 아이템 HTML 생성
   $gridContainer.innerHTML = feedList
@@ -103,22 +109,83 @@ function renderProfileFeeds(feedList) {
             </div>
         `
     )
-    .join('');
+    .join("");
 }
-
 
 // 프로필 페이지 피드 목록 렌더링
 async function initProfileFeeds() {
   const username = getPageUsername();
   const response = await fetchWithAuth(`api/profiles/${username}/posts`);
 
-  if(!response.ok){
+  if (!response.ok) {
     alert("실패");
   }
   const feedList = await response.json();
 
   // 피드 렌더링 업데이트
   renderProfileFeeds(feedList);
+}
+
+async function handleProfileImage(e) {
+  // console.log("file selected : ", e.target);
+
+  if (!e.target.files.length) return;
+
+  const uploadProfileImage = e.target.files[0];
+
+  // 파일 유효성 검사
+  if (!uploadProfileImage.type.startsWith("image/")) {
+    alert("이미지 파일만 업로드 가능합니다.");
+    return;
+  }
+
+  if (uploadProfileImage.size > 10 * 1024 * 1024) {
+    // 2MB
+    alert("파일 크기는 10MB 이하여야 합니다.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("profileImage", uploadProfileImage);
+
+  // 서버에 프로필 이미지 전송
+  const response = await fetchWithAuth(`/api/profiles/profile-image`, {
+    method: "PUT",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    alert("프로필 사진 업로드 실패");
+    return;
+  }
+
+  const { imageUrl } = await response.json();
+
+  const $img = $profileImageContainer.querySelector("img");
+  $img.src = imageUrl;
+  location.reload();
+
+}
+
+async function initChangeProfileImage() {
+  const $fileInput = document.querySelector("input[name=profileImage]");
+
+  //본인만 변경가능하게
+  const match = await isUserMatched();
+
+  if (!match) {
+    $profileImageContainer.querySelector(".profile-image").style.cursor =
+      "default";
+    $fileInput.disabled = true;
+    return;
+  }
+
+  $profileImageContainer.addEventListener("click", () => {
+    $fileInput.click();
+  });
+
+  // 파일 선택 완료 시 서버로 프로필 이미지 전송
+  $fileInput.addEventListener("change", handleProfileImage);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -129,5 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //프로필 페이지 개별 처리
   initProfileHeader(); // 프로필 페이지 헤더 관련
-  initProfileFeeds();  // 프로필 페이지 피드 관련
+  initProfileFeeds(); // 프로필 페이지 피드 관련
+  initChangeProfileImage(); // 프로필 이미지 변경 관련
 });

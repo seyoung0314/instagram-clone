@@ -34,6 +34,10 @@
                 <div class="profile-image">
                     <img src="/images/default-profile.svg" alt="프로필 이미지">
                 </div>
+                <input type="file" 
+                    name="profileImage" 
+                    accept="Image/*" 
+                    style="display: none;">
             </div>
 
             <!-- Profile Info -->
