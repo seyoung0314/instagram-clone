@@ -2,6 +2,7 @@ package com.example.instagramclone.controller.rest;
 
 import com.example.instagramclone.domain.post.dto.request.PostCreate;
 
+import com.example.instagramclone.domain.post.dto.response.PostDetailResponse;
 import com.example.instagramclone.domain.post.dto.response.PostResponse;
 import com.example.instagramclone.domain.post.entity.Post;
 
@@ -73,4 +74,14 @@ public class PostController {
                 .ok()
                 .body(response);
     }
+
+    // 피드 상세 보기 단일 조회 api
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDetailResponse> getDatail(
+            @PathVariable Long postId
+    ){
+        PostDetailResponse postDetails = postService.getPostDetails(postId);
+        return ResponseEntity.ok().body(postDetails);
+    }
+
 }

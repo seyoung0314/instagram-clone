@@ -54,10 +54,12 @@
         <association property="member" javaType="Member">
             <id property="id" column="id"/>
             <result property="username" column="username"/>
+            <result property="name" column="name"/>
             <result property="profileImageUrl" column="profile_image_url"/>
         </association>
         <!--    내부 리스트 객체 매핑 설정    -->
         <collection property="images" ofType="PostImage">
+            <id property="id" column="image_id"/>
             <result property="imageUrl" column="image_url"/>
             <result property="imageOrder" column="image_order"/>
         </collection>
@@ -87,19 +89,23 @@
 
     <!--  단일 피드 1개 상세 조회  -->
     <select id="findPostDetailById" resultMap="PostResultMap">
-        select
+        SELECT
         p.id
-        ,p.content
-        ,u.username
-        ,u.profile_image_url
-        ,pi.image_url
-        ,pi.image_order
-        from posts p
-        join users u
-        on p.member_id = u.id
-        join post_images pi
-        on p.id = pi.post_id
-        where p.id = #{postId}
-        order by pi.image_order
+        , p.content
+        , p.created_at
+        , u.username
+        , u.profile_image_url
+        , u.name
+        , pi.id AS image_id
+        , pi.image_url
+        , pi.image_order
+        FROM posts p
+        INNER JOIN users u
+        ON p.member_id = u.id
+        INNER JOIN post_images pi
+        ON p.id = pi.post_id
+        WHERE p.id = #{postId}
+        ORDER BY pi.image_order
+
     </select>
 </mapper>
