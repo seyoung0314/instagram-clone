@@ -78,9 +78,10 @@ public class PostController {
     // 피드 상세 보기 단일 조회 api
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> getDatail(
-            @PathVariable Long postId
+            @AuthenticationPrincipal String username
+            ,@PathVariable Long postId
     ){
-        PostDetailResponse postDetails = postService.getPostDetails(postId);
+        PostDetailResponse postDetails = postService.getPostDetails(postId,username);
         return ResponseEntity.ok().body(postDetails);
     }
 

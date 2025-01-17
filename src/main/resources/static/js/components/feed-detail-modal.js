@@ -1,6 +1,7 @@
 import CarouselManager from "../ui/CarouselManager.js";
 import { fetchWithAuth } from "../util/api.js";
 import { convertHashtagsToLinks, formatDate } from "./feed.js";
+import PostLikeManager from "../ui/PostLikeManager.js";
 
 const $modal = document.querySelector(".post-detail-modal");
 const $backdrop = $modal.querySelector(".modal-backdrop");
@@ -14,28 +15,31 @@ async function closeModal() {
   document.body.style.overflow = "hidden";
 }
 
-function renderModalContent({ postId, content, createdAt, user, images }) {
+// 모달에 피드내용 렌더링
+function renderModalContent({ postId, content, createdAt, user, images, likeStatus }) {
 
-  // 모달에 피드의 id를 태그에 주입
+  // 모달이 렌더링될 때 현재 피드의 id를 모달태그에 발라놓음
   $modal.dataset.postId = postId;
-  const { username, name, profileImageUrl } = user;
 
-  $modal.querySelectorAll(".post-username").forEach(($username) => {
+  const { username, profileImageUrl } = user;
+  const { liked, likeCount } = likeStatus;
+
+  $modal.querySelectorAll('.post-username').forEach(($username) => {
     $username.textContent = username;
     $username.href = `/${username}`;
   });
 
-  $modal.querySelectorAll(".post-profile-image img").forEach(($image) => {
-    $image.src = profileImageUrl ?? "/images/default-profile.svg";
+  $modal.querySelectorAll('.post-profile-image img').forEach(($image) => {
+    $image.src = profileImageUrl ?? '/images/default-profile.svg';
     $image.alt = `${username}님의 프로필 사진`;
   });
 
-  $modal.querySelector(".post-caption").innerHTML =
+  $modal.querySelector('.post-caption').innerHTML =
     convertHashtagsToLinks(content);
-  $modal.querySelector(".post-time").textContent = formatDate(createdAt);
+  $modal.querySelector('.post-time').textContent = formatDate(createdAt);
 
   // 이미지 캐러셀 렌더링
-  const $carouselContainer = $modal.querySelector(".modal-carousel-container");
+  const $carouselContainer = $modal.querySelector('.modal-carousel-container');
 
   $carouselContainer.innerHTML = `
                             <div class="carousel-container">
@@ -45,7 +49,7 @@ function renderModalContent({ postId, content, createdAt, user, images }) {
                                     (image) =>
                                       `<img src="${image.imageUrl}" alt="피드 이미지 ${image.imageOrder}">`
                                   )
-                                  .join("")}
+                                  .join('')}
                               </div>
                               ${
                                 images.length > 1
@@ -61,23 +65,38 @@ function renderModalContent({ postId, content, createdAt, user, images }) {
                                           .map(
                                             (_, index) =>
                                               `<span class="indicator ${
-                                                index === 0 ? "active" : ""
+                                                index === 0 ? 'active' : ''
                                               }"></span>`
                                           )
-                                          .join("")}
+                                          .join('')}
                                       </div>
                               `
-                                  : ""
+                                  : ''
                               }
                            </div>`;
-
+  
   // 캐러셀 만들기
   if (images.length > 1) {
-    const carousel = new CarouselManager($carouselContainer);
-
-    carousel.initWithImgTag([...$carouselContainer.querySelectorAll("img")]);
+    const carousel
+      = new CarouselManager($carouselContainer);
+    
+    carousel.initWithImgTag([...$carouselContainer.querySelectorAll('img')]);
   }
+
+  // 좋아요 렌더링 및 토글 처리
+  const $likeButton = $modal.querySelector('.like-button');
+  const $heartIcon = $modal.querySelector('.like-button i');
+  const $likeCount = $modal.querySelector('.likes-count');
+
+  $likeButton.classList.toggle('liked', liked);
+  $heartIcon.className = liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+  $likeCount.textContent = likeCount;
+
+  // 토글 처리
+  new PostLikeManager($modal);
+  
 }
+
 
 function findAdjacentPostIds(currentId) {
   // 현재 피드아이디를 기준으로 양 옆의 피드 id를 구해야함

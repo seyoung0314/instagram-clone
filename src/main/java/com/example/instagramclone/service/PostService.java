@@ -151,13 +151,22 @@ public class PostService {
     }
     // 피드 단일 조회 처리
     @Transactional (readOnly = true)
-    public PostDetailResponse getPostDetails(Long postId){
+    public PostDetailResponse getPostDetails(Long postId, String username){
+        // 유저의 이름을 통해 해당 유저의 id를 구함
+        Member foundMember = memberRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new MemberException(ErrorCode.MEMBER_NOT_FOUND)
+                );
+
         Post post = postRepository.findPostDetailById(postId)
                 .orElseThrow(
                         () -> new PostException(ErrorCode.POST_NOT_FOUND)
                 );
 
-        return PostDetailResponse.from(post);
+        return PostDetailResponse.of(post,LikeStatusResponse.of(
+                postLikeRepository.findByPostIdAndMemberId(postId,foundMember.getId()).isPresent()
+                ,postLikeRepository.countByPostId(postId)
+        ));
     }
 
 }
