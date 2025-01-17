@@ -1,3 +1,4 @@
+import CarouselManager from "../ui/CarouselManager.js";
 import { fetchWithAuth } from "../util/api.js";
 import { convertHashtagsToLinks, formatDate } from "./feed.js";
 
@@ -21,14 +22,59 @@ function renderModalContent({ postId, content, createdAt, user, images }) {
     $username.href = `/${username}`;
   });
 
-  $modal.querySelectorAll('.post-profile-image img').forEach(($image) => {
-    $image.src = profileImageUrl ?? '/images/default-profile.svg';
+  $modal.querySelectorAll(".post-profile-image img").forEach(($image) => {
+    $image.src = profileImageUrl ?? "/images/default-profile.svg";
     $image.alt = `${username}님의 프로필 사진`;
   });
 
+  $modal.querySelector(".post-caption").innerHTML =
+    convertHashtagsToLinks(content);
+  $modal.querySelector(".post-time").textContent = formatDate(createdAt);
 
-  $modal.querySelector('.post-caption').innerHTML = convertHashtagsToLinks(content);
-  $modal.querySelector('.post-time').textContent = formatDate(createdAt);
+  // 이미지 캐러셀 렌더링
+  const $carouselContainer = $modal.querySelector('.modal-carousel-container');
+
+  $carouselContainer.innerHTML = `
+                            <div class="carousel-container">
+                              <div class="carousel-track">
+                                ${images
+                                  .map(
+                                    (image) =>
+                                      `<img src="${image.imageUrl}" alt="피드 이미지 ${image.imageOrder}">`
+                                  )
+                                  .join("")}
+                              </div>
+                              ${
+                                images.length > 1
+                                  ? `
+                                      <button class="carousel-prev">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                      </button>
+                                      <button class="carousel-next">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                      </button>
+                                      <div class="carousel-indicators">
+                                        ${images
+                                          .map(
+                                            (_, index) =>
+                                              `<span class="indicator ${
+                                                index === 0 ? "active" : ""
+                                              }"></span>`
+                                          )
+                                          .join("")}
+                                      </div>
+                              `
+                                  : ""
+                              }
+                           </div>`;
+
+  // 캐러셀 만들기
+  if (images.length > 1) {
+    const carousel
+      = new CarouselManager($carouselContainer);
+    
+    carousel.initWithImgTag([...$carouselContainer.querySelectorAll('img')]);
+  }
 
 }
 
