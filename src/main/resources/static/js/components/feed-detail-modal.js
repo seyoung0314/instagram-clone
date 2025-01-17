@@ -15,6 +15,9 @@ async function closeModal() {
 }
 
 function renderModalContent({ postId, content, createdAt, user, images }) {
+
+  // 모달에 피드의 id를 태그에 주입
+  $modal.dataset.postId = postId;
   const { username, name, profileImageUrl } = user;
 
   $modal.querySelectorAll(".post-username").forEach(($username) => {
@@ -32,7 +35,7 @@ function renderModalContent({ postId, content, createdAt, user, images }) {
   $modal.querySelector(".post-time").textContent = formatDate(createdAt);
 
   // 이미지 캐러셀 렌더링
-  const $carouselContainer = $modal.querySelector('.modal-carousel-container');
+  const $carouselContainer = $modal.querySelector(".modal-carousel-container");
 
   $carouselContainer.innerHTML = `
                             <div class="carousel-container">
@@ -70,12 +73,66 @@ function renderModalContent({ postId, content, createdAt, user, images }) {
 
   // 캐러셀 만들기
   if (images.length > 1) {
-    const carousel
-      = new CarouselManager($carouselContainer);
-    
-    carousel.initWithImgTag([...$carouselContainer.querySelectorAll('img')]);
+    const carousel = new CarouselManager($carouselContainer);
+
+    carousel.initWithImgTag([...$carouselContainer.querySelectorAll("img")]);
+  }
+}
+
+function findAdjacentPostIds(currentId) {
+  // 현재 피드아이디를 기준으로 양 옆의 피드 id를 구해야함
+  const $currentGrid = document.querySelector(
+    `.grid-item[data-post-id="${currentId}"]`
+  );
+  const $prevGrid = $currentGrid.previousElementSibling;
+  const $nextGrid = $currentGrid.nextElementSibling;
+
+  const prevId = $prevGrid?.dataset.postId;
+  const nextId = $nextGrid?.dataset.postId;
+
+  return {
+    prevId: prevId ? prevId : null,
+    nextId: nextId ? nextId : null,
+  };
+}
+
+// 이전, 다음 피드 버튼 업데이트
+// (조건부 렌더링, 서버에 새로운 이미지 정보 요청)
+function updateFeedNavigation(crrentId) {
+  const $prevButton = $modal.querySelector(".modal-prev-button");
+  const $nextButton = $modal.querySelector(".modal-next-button");
+
+  // 현재 열려있는 피드 기준으로 이전, 다음 피드가 있는 지 확인하고
+  // 존재한다면 해당 피드들의 id를 가져오도록 한다.
+  const { prevId, nextId } = findAdjacentPostIds(crrentId);
+
+  console.log("---------");
+  
+  console.log(prevId);
+  console.log(nextId);
+  
+  
+
+  // 조건부 렌더링 처리 (현재 렌더링되어있는 피드가 첫피드인지 마지막피드인지? )
+  if (prevId) {
+    // 이전 버튼 처리
+    $prevButton.style.visibility  = "visible";
+    $prevButton.style.zIndex = "2";
+    $prevButton.onclick = () => openModal(prevId);
+  } else {
+    $prevButton.style.visibility  = "hidden";
+    $prevButton.style.zIndex = "-100";
   }
 
+  if (nextId) {
+    // 다음 버튼 처리
+    $nextButton.style.visibility  = "visible";
+    $nextButton.style.zIndex = "2";
+    $nextButton.onclick = () => openModal(nextId);
+  } else {
+    $nextButton.style.visibility  = "hidden";
+    $nextButton.style.zIndex = "-100";
+  }
 }
 
 //모달 열기
@@ -90,11 +147,33 @@ async function openModal(postId) {
 
   const data = await response.json();
 
+  // 화면에 렌더링
   renderModalContent(data);
+
+  // 이전 다음 버튼 업데이트하기
+  updateFeedNavigation(postId);
 
   //모달 디스플레이 변경
   $modal.style.display = "flex";
   document.body.style.overflow = "";
+}
+
+// 키보드 네비게이션
+function handleKeyPress(e) {
+
+  if($modal.style.display === "none") return;
+  const currentPostId = $modal.dataset.postId;
+  if ($modal.style.display === 'none') return;
+
+  const {prevId, nextId} = findAdjacentPostIds(currentPostId);
+
+  if (prevId && e.key === 'ArrowLeft') {
+    openModal(prevId);
+  } else if (nextId && e.key === 'ArrowRight') {
+    openModal(nextId);
+  } else if (e.key === 'Escape') {
+    closeModal();
+  }
 }
 
 function initFeedDetailModal() {
@@ -113,6 +192,8 @@ function initFeedDetailModal() {
   // 모달 닫기 이벤트
   $backdrop.addEventListener("click", closeModal);
   $closeButton.addEventListener("click", closeModal);
+
+  document.addEventListener('keydown',handleKeyPress);
 }
 
 export default initFeedDetailModal;
