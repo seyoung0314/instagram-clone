@@ -106,13 +106,6 @@ function updateFeedNavigation(crrentId) {
   // 존재한다면 해당 피드들의 id를 가져오도록 한다.
   const { prevId, nextId } = findAdjacentPostIds(crrentId);
 
-  console.log("---------");
-  
-  console.log(prevId);
-  console.log(nextId);
-  
-  
-
   // 조건부 렌더링 처리 (현재 렌더링되어있는 피드가 첫피드인지 마지막피드인지? )
   if (prevId) {
     // 이전 버튼 처리
