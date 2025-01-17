@@ -7,34 +7,30 @@ let element = {
   $feedContainer: document.querySelector(".feed-container"),
 };
 
-//한개의 피드를 렌더링하는 함수
-function createFeedItem({
-  feed_id: feedId,
-  username,
-  profileImageUrl,
-  content,
-  images,
-  createdAt,
-}) {
-  const makeImageTags = (images) => {
-    let imgTag = "";
-    for (const img of images) {
-      imgTag += `<img src="${img.imageUrl}">`;
-    }
-    return imgTag;
-  };
+// 한개의 피드를 렌더링하는 함수
+function createFeedItem({ feed_id: feedId, username, profileImageUrl, content, images, createdAt, likeStatus }) {
+
+
+  const { liked, likeCount } = likeStatus;
+
+  // const makeImageTags = (images) => { 
+  //   let imgTag = '';
+  //   for (const img of images) {
+  //     imgTag += `<img src="${img.imageUrl}">`;
+  //   }
+  //   return imgTag;
+  // };
 
   return `
-  <article class="post" data-post-id="${feedId}">
+    <article class="post" data-post-id="${feedId}">
       <div class="post-header">
         <div class="post-user-info">
           <div class="post-profile-image">
-            <img src="${
-              profileImageUrl || `/images/default-profile.svg`
-            }" alt="프로필 이미지">
+            <img src="${profileImageUrl || '/images/default-profile.svg'}" alt="프로필 이미지">
           </div>
           <div class="post-user-details">
-            <a href="${username}" class="post-username">
+            <a href="/${username}" class="post-username">
+                <!--      작성자 이름 배치      -->
                 ${username}
             </a>
           </div>
@@ -54,7 +50,7 @@ function createFeedItem({
                 <img src="${image.imageUrl}" alt="feed image${image.imageOrder}">
               `
               )
-              .join("")}
+              .join('')}
           </div>
           ${
             images.length > 1
@@ -70,13 +66,13 @@ function createFeedItem({
                 ${images
                   .map(
                     (_, i) => `
-                  <span class="indicator ${i === 0 ? "active" : ""}"></span>
+                  <span class="indicator ${i === 0 ? 'active' : ''}"></span>
                 `
                   )
-                  .join("")}
+                  .join('')}
             </div>
           `
-              : ""
+              : ''
           }
         </div>
       </div>
@@ -84,8 +80,8 @@ function createFeedItem({
       <div class="post-actions">
         <div class="post-buttons">
           <div class="post-buttons-left">
-            <button class="action-button like-button">
-              <i class="fa-regular fa-heart"></i>
+            <button class="action-button like-button ${liked ? 'liked' : ''}">
+              <i class="${liked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
             </button>
             <button class="action-button comment-button">
               <i class="fa-regular fa-comment"></i>
@@ -99,16 +95,18 @@ function createFeedItem({
           </button>
         </div>
         <div class="post-likes">
-          좋아요 <span class="likes-count">0</span>개
+          좋아요 <span class="likes-count">${likeCount}</span>개
         </div>
       </div>
       
 
       <div class="post-content">
         <div class="post-text">
-        ${truncateContent(username, content)}
+            <!--     피드 내용     -->
+            ${truncateContent(username, content)}
         </div>
         <div class="post-time">
+            <!--      피드 생성 시간      -->
             ${formatDate(createdAt)}
         </div>
       </div>
@@ -122,6 +120,7 @@ function createFeedItem({
     </article>
   `;
 }
+
 
 //피드 렌더링 함수
 async function renderFeed() {

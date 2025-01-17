@@ -1,5 +1,6 @@
 package com.example.instagramclone.domain.post.dto.response;
 
+import com.example.instagramclone.domain.like.dto.response.LikeStatusResponse;
 import com.example.instagramclone.domain.post.entity.Post;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,8 +27,11 @@ public class PostResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // 좋아요 상태 데이터
+    private LikeStatusResponse likeStatus;
+
     //entity를 주면 dto로 변환
-    public static PostResponse from(Post feed) {
+    public static PostResponse of(Post feed, LikeStatusResponse likeStatusResponse) {
         return PostResponse.builder()
                 .id(feed.getId())
                 .username(feed.getMember().getUsername())
@@ -41,6 +45,7 @@ public class PostResponse {
                 )
                 .createdAt(feed.getCreatedAt())
                 .updatedAt(feed.getUpdatedAt())
+                .likeStatus(likeStatusResponse)
                 .build();
     }
 }

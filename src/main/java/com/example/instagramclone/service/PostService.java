@@ -2,6 +2,7 @@ package com.example.instagramclone.service;
 
 import com.example.instagramclone.domain.hashtag.entity.Hashtag;
 import com.example.instagramclone.domain.hashtag.entity.PostHashtag;
+import com.example.instagramclone.domain.like.dto.response.LikeStatusResponse;
 import com.example.instagramclone.domain.member.entity.Member;
 import com.example.instagramclone.domain.post.dto.request.PostCreate;
 import com.example.instagramclone.domain.post.dto.response.PostDetailResponse;
@@ -13,6 +14,7 @@ import com.example.instagramclone.exception.MemberException;
 import com.example.instagramclone.exception.PostException;
 import com.example.instagramclone.repository.HashtagRepository;
 import com.example.instagramclone.repository.MemberRepository;
+import com.example.instagramclone.repository.PostLikeRepository;
 import com.example.instagramclone.repository.PostRepository;
 import com.example.instagramclone.util.FileUploadUtil;
 import com.example.instagramclone.util.HashtagUtil;
@@ -37,15 +39,28 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
     private final MemberRepository memberRepository; // 사용자 정보 가져오기
 
+    // 좋아요
+    private final PostLikeRepository postLikeRepository;
+
     // 피드 목록 조회 중간처리 (전체조회 후 이미지 조회하는 방식)
     @Transactional(readOnly = true)
-    public List<PostResponse> findAllFeeds() {
+    public List<PostResponse> findAllFeeds(String username) {
+
+        // 유저의 이름을 통해 해당 유저의 id를 구함
+        Member foundMember = memberRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new MemberException(ErrorCode.MEMBER_NOT_FOUND)
+                );
         // 전체 피드 조회
         return postRepository.findAll()
                 .stream()
                 .map(post -> {
-                    post.setImages(postRepository.findImagesByPostId(post.getId()));
-                    return PostResponse.from(post);
+                    LikeStatusResponse likeStatus = LikeStatusResponse.of(
+                            postLikeRepository.findByPostIdAndMemberId(post.getId()
+                                    ,foundMember.getId()).isPresent()
+                            ,postLikeRepository.countByPostId(post.getId())
+                    );
+                  return PostResponse.of(post,likeStatus);
                 })
                 .collect(Collectors.toList());
     }
