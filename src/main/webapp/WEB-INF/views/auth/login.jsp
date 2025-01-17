@@ -38,10 +38,14 @@
             <!-- 로그인 폼 -->
             <form class="auth-form" novalidate>
                 <div class="form-field">
-                    <input type="text" name="username" placeholder="전화번호, 사용자 이름 또는 이메일" required>
+                    <input type="text" name="username" 
+                    value="oo@aaa.com"
+                    placeholder="전화번호, 사용자 이름 또는 이메일" required >
                 </div>
                 <div class="form-field">
-                    <input type="password" name="password" placeholder="비밀번호" required>
+                    <input type="password" name="password"
+                    value="a1234846"
+                    placeholder="비밀번호" required>
                 </div>
                 <button type="submit" class="auth-button">로그인</button>
             </form>

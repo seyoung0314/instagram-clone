@@ -37,6 +37,7 @@ class PostLikeManager {
       this.likeStatus = likeStatus;
       this.updateUI(likeStatus);
     };
+    this.addDoubleLikeLike();
   }
 
   // 좋아요 처리
@@ -53,6 +54,23 @@ class PostLikeManager {
     if ($gridItem) {
       $gridItem.querySelector('.grid-likes-count').textContent = likeCount;
     }
+  }
+
+  addDoubleLikeLike(){
+    const $carousel = this.$container.querySelector('.carousel-container');
+    $carousel.ondblclick = () =>{
+      this.$likeButton.onclick();
+      
+      // 하트 애니메이션 표시
+      const $heartAnimation = document.createElement('div');
+      $heartAnimation.classList.add('heart-animation');
+      $heartAnimation.innerHTML = '<i class="fa-solid fa-heart"></i>';
+      $carousel.append($heartAnimation);
+      // 1초 후 애니메이션이 끝나면 하트 박스 삭제
+      setTimeout(() => { 
+        $heartAnimation.remove();
+      }, 1000);
+    };
   }
 }
 
