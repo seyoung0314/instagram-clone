@@ -12,7 +12,7 @@ class PostLikeManager {
     //좋아요 아이콘
     this.$heartIcon = container.querySelector(".like-button i");
     //좋아요 수
-    this.$likeCount = container.querySelector(".like-count");
+    this.$likeCount = container.querySelector(".likes-count");
 
     // 피드 ID
     this.postId = container.dataset.postId;
@@ -44,6 +44,15 @@ class PostLikeManager {
     // 아이콘 색상 처리
     this.$likeButton.classList.toggle("liked", liked);
     this.$heartIcon.className = liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+
+    // 좋아요 수 처리
+    this.$likeCount.textContent = likeCount;
+
+    // 프로필 페이지의 포스트 모달에서 하트 클릭 시 프로필 페이지 좋아요 동적변경되야함
+    const $gridItem = document.querySelector(`.grid-item[data-post-id="${this.postId}"]`);
+    if ($gridItem) {
+      $gridItem.querySelector('.grid-likes-count').textContent = likeCount;
+    }
   }
 }
 
