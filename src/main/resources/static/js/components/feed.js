@@ -1,5 +1,6 @@
 import { fetchWithAuth } from "../util/api.js";
 import CarouselManager from "../ui/CarouselManager.js";
+import PostLikeManager from "../ui/PostLikeManager.js";
 
 let element = {
   //피드가 들어갈 전체 영역
@@ -7,7 +8,14 @@ let element = {
 };
 
 //한개의 피드를 렌더링하는 함수
-function createFeedItem({feed_id : feedId, username,profileImageUrl, content, images, createdAt }) {
+function createFeedItem({
+  feed_id: feedId,
+  username,
+  profileImageUrl,
+  content,
+  images,
+  createdAt,
+}) {
   const makeImageTags = (images) => {
     let imgTag = "";
     for (const img of images) {
@@ -21,7 +29,9 @@ function createFeedItem({feed_id : feedId, username,profileImageUrl, content, im
       <div class="post-header">
         <div class="post-user-info">
           <div class="post-profile-image">
-            <img src="${profileImageUrl || `/images/default-profile.svg`}" alt="프로필 이미지">
+            <img src="${
+              profileImageUrl || `/images/default-profile.svg`
+            }" alt="프로필 이미지">
           </div>
           <div class="post-user-details">
             <a href="${username}" class="post-username">
@@ -120,7 +130,6 @@ async function renderFeed() {
   //피드 데이터를 서버로부터 불러오기
   const feedList = await fetchFeed();
   console.log(feedList);
-  
 
   //feed html을 생성하는 함수
 
@@ -162,11 +171,15 @@ async function renderFeed() {
       $btn.style.display = "none";
     });
   });
+
+  // 모든 피드에 좋아요 매니저를 세팅
+  $feedContainer.querySelectorAll(".post").forEach(($feed) => {
+    new PostLikeManager($feed);
+  });
 }
 
 //피드를 서버로부터 불러오는 함수
 async function fetchFeed() {
-
   // 서버요청 시 토큰을 헤더에 포함해서 요청해야 함
   const response = await fetchWithAuth("/api/posts");
 
@@ -225,8 +238,12 @@ function truncateContent(writer, content, maxLength = 20) {
   return `
     <a href="${writer}" class="post-username">${writer}</a>
     <span class="post-caption post-caption-truncated">
-      <span class="truncated-text">${convertHashtagsToLinks(truncatedContent)}...</span>
-      <span class="full-text" style="display: none;">${convertHashtagsToLinks(content)}</span>
+      <span class="truncated-text">${convertHashtagsToLinks(
+        truncatedContent
+      )}...</span>
+      <span class="full-text" style="display: none;">${convertHashtagsToLinks(
+        content
+      )}</span>
     </span>
     <button class="more-button">더 보기</button>
   `;
