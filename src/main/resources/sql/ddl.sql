@@ -107,3 +107,22 @@ CREATE TABLE post_likes
 -- 인덱스 추가
 CREATE INDEX idx_post_likes_post_id ON post_likes (post_id);
 CREATE INDEX idx_post_likes_member_id ON post_likes (member_id);
+
+
+-- 댓글 테이블
+CREATE TABLE comments
+(
+    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    post_id    BIGINT NOT NULL,
+    member_id  BIGINT NOT NULL,
+    content    TEXT   NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+-- 조회 성능을 위한 인덱스 추가
+CREATE INDEX idx_comments_post_id ON comments (post_id);
+CREATE INDEX idx_comments_member_id ON comments (member_id);
