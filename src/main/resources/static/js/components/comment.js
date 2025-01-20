@@ -1,7 +1,6 @@
 import { fetchWithAuth } from "../util/api.js";
 import { openModal, createCommentHTML } from "./feed-detail-modal.js";
 
-
 // 댓글 등록 요청 처리 (피드목록 - 여러개, 상세보기 모달 - 하나)
 export function createComment($form) {
   // 댓글 입력창 가져오기
@@ -56,7 +55,7 @@ export function createComment($form) {
     // 두번째 부턴 n개의 텍스트만 갱신
 
     // 피드목록인지 확인
-    const $feed = $form.closest('.feed-page');
+    const $feed = $form.closest(".feed-page");
     if ($feed) {
       if (commentCount === 1) {
         const $commentPreview = document.createElement("div");
@@ -73,17 +72,25 @@ export function createComment($form) {
       }
     }
 
-        // 댓글이 작성된 공간이 모달 내부라면 실시간으로 새댓글을 렌더링
-        const $modal = $form.closest('.post-detail-modal');
-        if ($modal) {
-          // 첫 댓글인 경우 '아직 댓글이 없습니다'를 제거
-          if (commentCount === 1) {
-            const $noComment = $modal.querySelector('.no-comments-container');
-            $noComment?.remove();
-          }
-          const $commentsList = $modal.querySelector('.comments-list');
-          $commentsList.innerHTML += createCommentHTML(comment);
-        }
-    
+    // 프로필 페이지의 포스트 모달에서 댓글달면 프로필 페이지 댓글 수 동적변경되야함
+    const $gridItem = document.querySelector(
+      `.grid-item[data-post-id="${postId}"]`
+    );
+    if ($gridItem) {
+      $gridItem.querySelector(".grid-comments-count").textContent =
+        commentCount;
+    }
+
+    // 댓글이 작성된 공간이 모달 내부라면 실시간으로 새댓글을 렌더링
+    const $modal = $form.closest(".post-detail-modal");
+    if ($modal) {
+      // 첫 댓글인 경우 '아직 댓글이 없습니다'를 제거
+      if (commentCount === 1) {
+        const $noComment = $modal.querySelector(".no-comments-container");
+        $noComment?.remove();
+      }
+      const $commentsList = $modal.querySelector(".comments-list");
+      $commentsList.innerHTML += createCommentHTML(comment);
+    }
   }
 }
