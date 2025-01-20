@@ -53,7 +53,7 @@ function renderComments(comments) {
 async function closeModal() {
   //모달 디스플레이 변경
   $modal.style.display = "none";
-  document.body.style.overflow = "hidden";
+  document.body.style.overflow = "";
 }
 
 // 모달에 피드내용 렌더링

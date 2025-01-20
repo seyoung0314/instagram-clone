@@ -1,5 +1,6 @@
 package com.example.instagramclone.domain.post.dto.response;
 
+import com.example.instagramclone.domain.comment.dto.response.CommentResponse;
 import com.example.instagramclone.domain.like.dto.response.LikeStatusResponse;
 import com.example.instagramclone.domain.member.dto.response.MeResponse;
 import com.example.instagramclone.domain.post.entity.Post;
@@ -30,7 +31,11 @@ public class PostDetailResponse {
     // 졸아요 상태
     public LikeStatusResponse likeStatus;
 
-    public static PostDetailResponse of(Post post, LikeStatusResponse likeStatus) {
+    // 댓글 목록
+    private List<CommentResponse> comments;
+
+    public static PostDetailResponse of(
+            Post post, LikeStatusResponse likeStatus, List<CommentResponse> comments) {
         return PostDetailResponse.builder()
                 .postId(post.getId())
                 .content(post.getContent())
@@ -40,6 +45,7 @@ public class PostDetailResponse {
                                 PostImageResponse::from)
                         .collect(Collectors.toList()))
                 .likeStatus(likeStatus)
+                .comments(comments)
                 .build();
     }
 }

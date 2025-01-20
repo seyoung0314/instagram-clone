@@ -9,7 +9,8 @@ public class LikeStatusResponse {
     private boolean liked; // true : 좋아요 ,  false : 취소
     private long likeCount; // 피드의 좋아요 갯수
 
-    public static LikeStatusResponse of(boolean liked, long likeCount) {
+    public static LikeStatusResponse of(boolean liked
+            , long likeCount) {
         return LikeStatusResponse.builder()
                 .liked(liked)
                 .likeCount(likeCount)

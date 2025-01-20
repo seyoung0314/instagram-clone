@@ -1,5 +1,6 @@
 package com.example.instagramclone.service;
 
+import com.example.instagramclone.domain.comment.dto.response.CommentResponse;
 import com.example.instagramclone.domain.hashtag.entity.Hashtag;
 import com.example.instagramclone.domain.hashtag.entity.PostHashtag;
 import com.example.instagramclone.domain.like.dto.response.LikeStatusResponse;
@@ -162,10 +163,22 @@ public class PostService {
                         () -> new PostException(ErrorCode.POST_NOT_FOUND)
                 );
 
-        return PostDetailResponse.of(post,LikeStatusResponse.of(
-                postLikeRepository.findByPostIdAndMemberId(postId,foundMember.getId()).isPresent()
-                ,postLikeRepository.countByPostId(postId)
-        ));
+        // 좋아요 상태
+        LikeStatusResponse likeStatus = LikeStatusResponse.of(
+                postLikeRepository.findByPostIdAndMemberId(postId, foundMember.getId()).isPresent()
+                , postLikeRepository.countByPostId(postId)
+        );
+        // 댓글 목록
+        List<CommentResponse> commentResponses = commentRepository.findByPostId(postId)
+                .stream()
+                .map(CommentResponse::from)
+                .collect(Collectors.toList());
+
+        return PostDetailResponse.of(
+                post,
+                likeStatus,
+                commentResponses
+        );
     }
 
 }
