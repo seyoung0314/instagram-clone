@@ -2,6 +2,7 @@ import { fetchWithAuth } from "../util/api.js";
 import CarouselManager from "../ui/CarouselManager.js";
 import PostLikeManager from "../ui/PostLikeManager.js";
 import { createComment } from "./comment.js";
+import { openModal } from "./feed-detail-modal.js";
 
 let element = {
   //피드가 들어갈 전체 영역
@@ -183,6 +184,11 @@ async function renderFeed() {
   $feedContainer.querySelectorAll(".post").forEach(($feed) => {
     new PostLikeManager($feed);
     createComment($feed.querySelector('.comment-form'));
+    
+    // 피드 댓글 말풍선, 댓글 n개보기 버튼 클릭 시 상세보기 모달열기
+    const postId = $feed.dataset.postId;
+    $feed.querySelector('.comment-button').addEventListener('click',()=>openModal(postId) );
+    $feed.querySelector('.view-comments-button')?.addEventListener('click',()=>openModal(postId));
   });
 }
 

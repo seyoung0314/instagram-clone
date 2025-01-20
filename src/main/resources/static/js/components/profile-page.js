@@ -100,7 +100,7 @@ function renderProfileFeeds(feedList) {
                 <div class="grid-item-overlay">
                     <div class="grid-item-stats">
                         <span>
-<i class="fa-solid fa-heart"></i> 
+                            <i class="fa-solid fa-heart"></i> 
                             <span class="grid-likes-count">${feed.likeCount}</span>
                         </span>
                         <span>

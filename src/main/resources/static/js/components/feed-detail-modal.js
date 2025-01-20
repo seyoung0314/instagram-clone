@@ -103,8 +103,8 @@ function findAdjacentPostIds(currentId) {
   const $currentGrid = document.querySelector(
     `.grid-item[data-post-id="${currentId}"]`
   );
-  const $prevGrid = $currentGrid.previousElementSibling;
-  const $nextGrid = $currentGrid.nextElementSibling;
+  const $prevGrid = $currentGrid?.previousElementSibling;
+  const $nextGrid = $currentGrid?.nextElementSibling;
 
   const prevId = $prevGrid?.dataset.postId;
   const nextId = $nextGrid?.dataset.postId;
@@ -148,7 +148,7 @@ function updateFeedNavigation(crrentId) {
 }
 
 //모달 열기
-async function openModal(postId) {
+export async function openModal(postId) {
   // 서버에 데이터 요청
   const response = await fetchWithAuth(`/api/posts/${postId}`);
 
@@ -188,7 +188,7 @@ function handleKeyPress(e) {
   }
 }
 
-function initFeedDetailModal() {
+export function initFeedDetailModal() {
   // 피드 썸네일 클릭 시 모달이 열리도록 처리
 
   // index페이지에서 사용 시 gridContainer가 없기에 처리
@@ -208,4 +208,3 @@ function initFeedDetailModal() {
   document.addEventListener('keydown',handleKeyPress);
 }
 
-export default initFeedDetailModal;
