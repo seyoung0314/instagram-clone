@@ -54,6 +54,16 @@ class PostLikeManager {
     if ($gridItem) {
       $gridItem.querySelector('.grid-likes-count').textContent = likeCount;
     }
+
+    // 전체피드 목록 페이지에서 피드 목록의 좋아요 수와 상태 수동으로 변경
+    const $feed =document.querySelector(`post[data-post-id="${this.postId}"]`);
+    if($feed){
+      $feed.querySelector('.like-count').textContent = likeCount;
+      const $likeBtn = $feed.querySelector('.like-button');
+      $likeBtn.classList.toggle('liked',liked);
+      $likeBtn.querySelector('i').className = liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+  
+    }
   }
 
   addDoubleLikeLike(){
