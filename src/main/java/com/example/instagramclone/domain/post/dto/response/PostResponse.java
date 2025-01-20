@@ -30,8 +30,11 @@ public class PostResponse {
     // 좋아요 상태 데이터
     private LikeStatusResponse likeStatus;
 
+    // 댓글 갯수
+    private long commentCount;
+
     //entity를 주면 dto로 변환
-    public static PostResponse of(Post feed, LikeStatusResponse likeStatusResponse) {
+    public static PostResponse of(Post feed, LikeStatusResponse likeStatusResponse, long commentCount) {
         return PostResponse.builder()
                 .id(feed.getId())
                 .username(feed.getMember().getUsername())
@@ -46,6 +49,7 @@ public class PostResponse {
                 .createdAt(feed.getCreatedAt())
                 .updatedAt(feed.getUpdatedAt())
                 .likeStatus(likeStatusResponse)
+                .commentCount(commentCount)
                 .build();
     }
 }

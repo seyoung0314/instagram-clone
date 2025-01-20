@@ -12,10 +12,7 @@ import com.example.instagramclone.domain.post.entity.PostImage;
 import com.example.instagramclone.exception.ErrorCode;
 import com.example.instagramclone.exception.MemberException;
 import com.example.instagramclone.exception.PostException;
-import com.example.instagramclone.repository.HashtagRepository;
-import com.example.instagramclone.repository.MemberRepository;
-import com.example.instagramclone.repository.PostLikeRepository;
-import com.example.instagramclone.repository.PostRepository;
+import com.example.instagramclone.repository.*;
 import com.example.instagramclone.util.FileUploadUtil;
 import com.example.instagramclone.util.HashtagUtil;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +35,7 @@ public class PostService {
     private final HashtagUtil hashtagUtil;
     private final HashtagRepository hashtagRepository;
     private final MemberRepository memberRepository; // 사용자 정보 가져오기
+    private final CommentRepository commentRepository; // 댓글 정보 가져오기
 
     // 좋아요
     private final PostLikeRepository postLikeRepository;
@@ -60,7 +58,8 @@ public class PostService {
                                     ,foundMember.getId()).isPresent()
                             ,postLikeRepository.countByPostId(post.getId())
                     );
-                  return PostResponse.of(post,likeStatus);
+                    long commentCount = commentRepository.countByPostId(post.getId());
+                  return PostResponse.of(post,likeStatus,commentCount);
                 })
                 .collect(Collectors.toList());
     }

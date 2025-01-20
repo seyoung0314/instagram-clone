@@ -9,7 +9,7 @@ let element = {
 };
 
 // 한개의 피드를 렌더링하는 함수
-function createFeedItem({ feed_id: feedId, username, profileImageUrl, content, images, createdAt, likeStatus }) {
+function createFeedItem({ commentCount,feed_id: feedId, username, profileImageUrl, content, images, createdAt, likeStatus }) {
 
 
   const { liked, likeCount } = likeStatus;
@@ -111,8 +111,15 @@ function createFeedItem({ feed_id: feedId, username, profileImageUrl, content, i
             ${formatDate(createdAt)}
         </div>
       </div>
-      
       <div class="post-comments">
+            <!-- 댓글이 있을 때만 버튼 표시 -->
+          ${commentCount > 0 ? `
+            <!-- 댓글 미리보기 -->
+            <div class="comments-preview">
+              <button class="view-comments-button">
+                댓글 ${commentCount}개 모두 보기
+              </button>
+            </div>` : ''}
         <form class="comment-form">
           <input type="text" placeholder="댓글 달기..." class="comment-input">
           <button type="submit" class="comment-submit-btn" disabled>게시</button>
