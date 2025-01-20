@@ -2,14 +2,15 @@ import CarouselManager from "../ui/CarouselManager.js";
 import { fetchWithAuth } from "../util/api.js";
 import { convertHashtagsToLinks, formatDate } from "./feed.js";
 import PostLikeManager from "../ui/PostLikeManager.js";
+import { createComment } from './comment.js';
 
 const $modal = document.querySelector(".post-detail-modal");
 const $backdrop = $modal.querySelector(".modal-backdrop");
 const $closeButton = $modal.querySelector(".modal-close-button");
 const $gridContainer = document.querySelector(".posts-grid");
 
-// 댓글 HTML 생성
-function createCommentHTML(comment) {
+// 댓글 하나의 HTML 생성
+export function createCommentHTML(comment) {
   return `
     <div class="comment-item">
       <div class="post-profile-image">
@@ -143,6 +144,9 @@ function renderModalContent({
   new PostLikeManager($modal);
 
   renderComments(comments);
+
+    // 댓글 form 이벤트 처리
+    createComment($modal.querySelector('.comment-form'));
 }
 
 function findAdjacentPostIds(currentId) {

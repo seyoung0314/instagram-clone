@@ -27,7 +27,7 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <script src="/js/components/profile-page.js" type="module" defer></script>
   </head>
   <body>
-    <div class="container">
+    <div class="container profile-page">
       <!-- Left Sidebar -->
       <%@ include file="./sidebar.jsp" %>
 
