@@ -8,6 +8,47 @@ const $backdrop = $modal.querySelector(".modal-backdrop");
 const $closeButton = $modal.querySelector(".modal-close-button");
 const $gridContainer = document.querySelector(".posts-grid");
 
+// 댓글 HTML 생성
+function createCommentHTML(comment) {
+  return `
+    <div class="comment-item">
+      <div class="post-profile-image">
+        <img src="${comment.userProfileImage ?? "/images/default-profile.svg"}" 
+             alt="프로필 이미지">
+      </div>
+      <div class="comment-content">
+        <div>
+          <a href="/${comment.username}" class="post-username">
+            ${comment.username}
+          </a>
+          <span class="comment-text">${convertHashtagsToLinks(
+            comment.content
+          )}</span>
+        </div>
+        <div class="post-time">${formatDate(comment.createdAt)}</div>
+      </div>
+    </div>
+  `;
+}
+// 댓글 목록 렌더링
+function renderComments(comments) {
+  const $commentsList = $modal.querySelector(".comments-list");
+  if (comments.length > 0) {
+    $commentsList.innerHTML = comments.map(createCommentHTML).join("");
+  } else {
+    $commentsList.innerHTML = `
+    <div class="no-comments-container">
+      <div class="no-comments">
+        아직 댓글이 없습니다.
+      </div>
+      <div class="no-comments__additional">
+        댓글을 남겨보세요.
+      </div>
+    </div>
+    `;
+  }
+}
+
 //모달 닫기
 async function closeModal() {
   //모달 디스플레이 변경
@@ -16,30 +57,37 @@ async function closeModal() {
 }
 
 // 모달에 피드내용 렌더링
-function renderModalContent({ postId, content, createdAt, user, images, likeStatus }) {
-
+function renderModalContent({
+  comments,
+  postId,
+  content,
+  createdAt,
+  user,
+  images,
+  likeStatus,
+}) {
   // 모달이 렌더링될 때 현재 피드의 id를 모달태그에 발라놓음
   $modal.dataset.postId = postId;
 
   const { username, profileImageUrl } = user;
   const { liked, likeCount } = likeStatus;
 
-  $modal.querySelectorAll('.post-username').forEach(($username) => {
+  $modal.querySelectorAll(".post-username").forEach(($username) => {
     $username.textContent = username;
     $username.href = `/${username}`;
   });
 
-  $modal.querySelectorAll('.post-profile-image img').forEach(($image) => {
-    $image.src = profileImageUrl ?? '/images/default-profile.svg';
+  $modal.querySelectorAll(".post-profile-image img").forEach(($image) => {
+    $image.src = profileImageUrl ?? "/images/default-profile.svg";
     $image.alt = `${username}님의 프로필 사진`;
   });
 
-  $modal.querySelector('.post-caption').innerHTML =
+  $modal.querySelector(".post-caption").innerHTML =
     convertHashtagsToLinks(content);
-  $modal.querySelector('.post-time').textContent = formatDate(createdAt);
+  $modal.querySelector(".post-time").textContent = formatDate(createdAt);
 
   // 이미지 캐러셀 렌더링
-  const $carouselContainer = $modal.querySelector('.modal-carousel-container');
+  const $carouselContainer = $modal.querySelector(".modal-carousel-container");
 
   $carouselContainer.innerHTML = `
                             <div class="carousel-container">
@@ -49,7 +97,7 @@ function renderModalContent({ postId, content, createdAt, user, images, likeStat
                                     (image) =>
                                       `<img src="${image.imageUrl}" alt="피드 이미지 ${image.imageOrder}">`
                                   )
-                                  .join('')}
+                                  .join("")}
                               </div>
                               ${
                                 images.length > 1
@@ -65,38 +113,37 @@ function renderModalContent({ postId, content, createdAt, user, images, likeStat
                                           .map(
                                             (_, index) =>
                                               `<span class="indicator ${
-                                                index === 0 ? 'active' : ''
+                                                index === 0 ? "active" : ""
                                               }"></span>`
                                           )
-                                          .join('')}
+                                          .join("")}
                                       </div>
                               `
-                                  : ''
+                                  : ""
                               }
                            </div>`;
-  
+
   // 캐러셀 만들기
   if (images.length > 1) {
-    const carousel
-      = new CarouselManager($carouselContainer);
-    
-    carousel.initWithImgTag([...$carouselContainer.querySelectorAll('img')]);
+    const carousel = new CarouselManager($carouselContainer);
+
+    carousel.initWithImgTag([...$carouselContainer.querySelectorAll("img")]);
   }
 
   // 좋아요 렌더링 및 토글 처리
-  const $likeButton = $modal.querySelector('.like-button');
-  const $heartIcon = $modal.querySelector('.like-button i');
-  const $likeCount = $modal.querySelector('.likes-count');
+  const $likeButton = $modal.querySelector(".like-button");
+  const $heartIcon = $modal.querySelector(".like-button i");
+  const $likeCount = $modal.querySelector(".likes-count");
 
-  $likeButton.classList.toggle('liked', liked);
-  $heartIcon.className = liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+  $likeButton.classList.toggle("liked", liked);
+  $heartIcon.className = liked ? "fa-solid fa-heart" : "fa-regular fa-heart";
   $likeCount.textContent = likeCount;
 
   // 토글 처리
   new PostLikeManager($modal);
-  
-}
 
+  renderComments(comments);
+}
 
 function findAdjacentPostIds(currentId) {
   // 현재 피드아이디를 기준으로 양 옆의 피드 id를 구해야함
@@ -128,21 +175,21 @@ function updateFeedNavigation(crrentId) {
   // 조건부 렌더링 처리 (현재 렌더링되어있는 피드가 첫피드인지 마지막피드인지? )
   if (prevId) {
     // 이전 버튼 처리
-    $prevButton.style.visibility  = "visible";
+    $prevButton.style.visibility = "visible";
     $prevButton.style.zIndex = "2";
     $prevButton.onclick = () => openModal(prevId);
   } else {
-    $prevButton.style.visibility  = "hidden";
+    $prevButton.style.visibility = "hidden";
     $prevButton.style.zIndex = "-100";
   }
 
   if (nextId) {
     // 다음 버튼 처리
-    $nextButton.style.visibility  = "visible";
+    $nextButton.style.visibility = "visible";
     $nextButton.style.zIndex = "2";
     $nextButton.onclick = () => openModal(nextId);
   } else {
-    $nextButton.style.visibility  = "hidden";
+    $nextButton.style.visibility = "hidden";
     $nextButton.style.zIndex = "-100";
   }
 }
@@ -159,6 +206,8 @@ export async function openModal(postId) {
 
   const data = await response.json();
 
+  console.log(data);
+
   // 화면에 렌더링
   renderModalContent(data);
 
@@ -167,28 +216,27 @@ export async function openModal(postId) {
 
   //모달 디스플레이 변경
   $modal.style.display = "flex";
-  document.body.style.overflow = "";
+  document.body.style.overflow = "hidden";
 }
 
 // 키보드 네비게이션
 function handleKeyPress(e) {
-
-  if($modal.style.display === "none") return;
+  if ($modal.style.display === "none") return;
   const currentPostId = $modal.dataset.postId;
-  if ($modal.style.display === 'none') return;
+  if ($modal.style.display === "none") return;
 
-  const {prevId, nextId} = findAdjacentPostIds(currentPostId);
+  const { prevId, nextId } = findAdjacentPostIds(currentPostId);
 
-  if (prevId && e.key === 'ArrowLeft') {
+  if (prevId && e.key === "ArrowLeft") {
     openModal(prevId);
-  } else if (nextId && e.key === 'ArrowRight') {
+  } else if (nextId && e.key === "ArrowRight") {
     openModal(nextId);
-  } else if (e.key === 'Escape') {
+  } else if (e.key === "Escape") {
     closeModal();
   }
 }
 
-export function initFeedDetailModal() {
+function initFeedDetailModal() {
   // 피드 썸네일 클릭 시 모달이 열리도록 처리
 
   // index페이지에서 사용 시 gridContainer가 없기에 처리
@@ -205,6 +253,6 @@ export function initFeedDetailModal() {
   $backdrop.addEventListener("click", closeModal);
   $closeButton.addEventListener("click", closeModal);
 
-  document.addEventListener('keydown',handleKeyPress);
+  document.addEventListener("keydown", handleKeyPress);
 }
-
+export default initFeedDetailModal;
