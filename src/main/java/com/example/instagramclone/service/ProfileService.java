@@ -1,11 +1,13 @@
 package com.example.instagramclone.service;
 
+import com.example.instagramclone.domain.follow.dto.FollowStatusResponse;
 import com.example.instagramclone.domain.member.dto.response.MeResponse;
 import com.example.instagramclone.domain.member.dto.response.ProfileHeaderResponse;
 import com.example.instagramclone.domain.member.entity.Member;
 import com.example.instagramclone.domain.post.dto.response.ProfilePostResponse;
 import com.example.instagramclone.exception.ErrorCode;
 import com.example.instagramclone.exception.MemberException;
+import com.example.instagramclone.repository.FollowRepository;
 import com.example.instagramclone.repository.MemberRepository;
 import com.example.instagramclone.repository.PostRepository;
 import com.example.instagramclone.util.FileUploadUtil;
@@ -29,6 +31,7 @@ public class ProfileService {
     private final PostRepository postRepository;
 
     private final FileUploadUtil fileUploadUtil;
+    private  final FollowRepository followRepository;
 
     /**
      * 로그인한 유저 정보를 반환하는 처리
@@ -45,13 +48,26 @@ public class ProfileService {
 
     // 프로필 페이지 상단 헤더에 사용할 데이터 가져오기
     @Transactional(readOnly = true)
-    public ProfileHeaderResponse getProfileHeader(String username) {
+    public ProfileHeaderResponse getProfileHeader(String username, String loginUserName) {
         //사용자 이름에 매칭되는 회원정보 (프사, 이름, 사용자이름)
         Member foundMember = getMember(username);
 
+        // 로그인 사용자 정보
+        Member loginMember = getMember(loginUserName);
+
         //이 사용자가 작성한 피드의 수
         long feedCount = postRepository.countByMemberId(foundMember.getId());
-        return ProfileHeaderResponse.of(foundMember, feedCount);
+        return ProfileHeaderResponse.of(
+                foundMember
+                , feedCount
+                , FollowStatusResponse.of(
+                        followRepository.doesFollowExist(foundMember.getId(), loginMember.getId()),
+                        followRepository.countFollowByType(foundMember.getId(), "follower"),
+                        followRepository.countFollowByType(foundMember.getId(), "following")
+                )
+        );
+
+
     }
 
     // 프로필 페이지 피드 목록에 사용할 데이터 처리

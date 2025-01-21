@@ -1,6 +1,7 @@
 package com.example.instagramclone.domain.post.dto.response;
 
 import com.example.instagramclone.domain.comment.dto.response.CommentResponse;
+import com.example.instagramclone.domain.follow.dto.FollowStatusResponse;
 import com.example.instagramclone.domain.like.dto.response.LikeStatusResponse;
 import com.example.instagramclone.domain.member.dto.response.MeResponse;
 import com.example.instagramclone.domain.post.entity.Post;

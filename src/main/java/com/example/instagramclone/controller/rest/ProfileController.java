@@ -35,8 +35,9 @@ public class ProfileController {
     @GetMapping("/{username}")
     public ResponseEntity<ProfileHeaderResponse> getProfileHeader(
             @PathVariable String username
+            ,@AuthenticationPrincipal String loginUserName
     ) {
-        ProfileHeaderResponse responseData = profileService.getProfileHeader(username);
+        ProfileHeaderResponse responseData = profileService.getProfileHeader(username,loginUserName);
 
         return ResponseEntity.ok().body(responseData);
 
