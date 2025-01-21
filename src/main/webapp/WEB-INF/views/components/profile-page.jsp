@@ -58,9 +58,9 @@ language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
             <!-- Stats Row -->
             <ul class="profile-stats">
-              <li>게시물 <span class="stats-number">0</span></li>
-              <li>팔로워 <span class="stats-number">0</span></li>
-              <li>팔로우 <span class="stats-number">0</span></li>
+              <li>게시물 <span class="stats-number feed-count">0</span></li>
+              <li>팔로워 <span class="stats-number follower-count" >0</span></li>
+              <li>팔로우 <span class="stats-number following-count">0</span></li>
             </ul>
 
             <!-- Bio -->
