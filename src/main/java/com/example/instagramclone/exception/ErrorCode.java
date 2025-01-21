@@ -32,6 +32,9 @@ public enum ErrorCode {
     DUPLICATE_USERNAME(HttpStatus.CONFLICT, "이미 사용 중인 사용자 이름입니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
 
+    // 팔로우 관련
+    SELF_FOLLOW(HttpStatus.BAD_REQUEST,"자기자신을 팔로우 할 수 없습니다."),
+
     // 인증 관련
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다."),
     ;
