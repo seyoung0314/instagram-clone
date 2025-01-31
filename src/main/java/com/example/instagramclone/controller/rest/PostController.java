@@ -30,10 +30,14 @@ public class PostController {
 
     //피드 목록 조회 요청
     @GetMapping
-    public ResponseEntity<?> getFeeds(@AuthenticationPrincipal String username){
-        log.info("피드에서 인증된 사용자명 : {}",username);
+    public ResponseEntity<?> getFeeds(
+            @AuthenticationPrincipal String username,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
 
-        List<PostResponse> allFeeds = postService.findAllFeeds(username);
+        log.info("피드에서 인증된 사용자명 : {}", username);
+
+        FeedResponse allFeeds = postService.findAllFeeds(username, size, page);
 
         return ResponseEntity
                 .ok()
@@ -46,15 +50,15 @@ public class PostController {
             // 피드 내용, 작성자 이름 (json) {"writer":"", "content":""} -> 검증
             // 이미지 파일 목록 (multipart-file)
             @RequestPart("feed") @Valid PostCreate postCreate
-            ,@RequestPart("images") List<MultipartFile> images
-            ,@AuthenticationPrincipal String username   //인증된 사용자이름
-            ) {
+            , @RequestPart("images") List<MultipartFile> images
+            , @AuthenticationPrincipal String username   //인증된 사용자이름
+    ) {
 
         // 파일 업로드 개수 검증
         if (images.size() > 10) {
             throw new PostException(ErrorCode.TOO_MANY_FILES, "파일의 개수는 10개를 초과할 수 없습니다.");
         }
-        log.info("============= : {}",postCreate);
+        log.info("============= : {}", postCreate);
 
         images.forEach(image -> {
             log.info("===============image {}", image.getOriginalFilename());
@@ -63,7 +67,7 @@ public class PostController {
         postCreate.setImages(images);
 
         // 이미지와 JSON을 서비스클래스로 전송
-        Long postId = postService.createFeed(postCreate,username);
+        Long postId = postService.createFeed(postCreate, username);
 
         // 응답 메시지 JSON 생성 { "id": 23, "message": "save success" }
         Map<String, Object> response = Map.of(
@@ -79,9 +83,9 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> getDatail(
             @AuthenticationPrincipal String username
-            ,@PathVariable Long postId
-    ){
-        PostDetailResponse postDetails = postService.getPostDetails(postId,username);
+            , @PathVariable Long postId
+    ) {
+        PostDetailResponse postDetails = postService.getPostDetails(postId, username);
         return ResponseEntity.ok().body(postDetails);
     }
 

@@ -6,6 +6,7 @@ import com.example.instagramclone.domain.hashtag.entity.PostHashtag;
 import com.example.instagramclone.domain.like.dto.response.LikeStatusResponse;
 import com.example.instagramclone.domain.member.entity.Member;
 import com.example.instagramclone.domain.post.dto.request.PostCreate;
+import com.example.instagramclone.domain.post.dto.response.FeedResponse;
 import com.example.instagramclone.domain.post.dto.response.PostDetailResponse;
 import com.example.instagramclone.domain.post.dto.response.PostResponse;
 import com.example.instagramclone.domain.post.entity.Post;
@@ -43,7 +44,13 @@ public class PostService {
 
     // 피드 목록 조회 중간처리 (전체조회 후 이미지 조회하는 방식)
     @Transactional(readOnly = true)
-    public List<PostResponse> findAllFeeds(String username) {
+    public FeedResponse findAllFeeds(String username, int size, int page) {
+        // offset은 size에 따라 숫자가 바뀜
+        /*
+            size = 5   ->   offset  0, 5, 10, 15, 20
+            size = 3   ->   offset  0, 3, 6, 9, 12, 15
+         */
+        int offset = (page - 1) * size;
 
         // 유저의 이름을 통해 해당 유저의 id를 구함
         Member foundMember = memberRepository.findByUsername(username)
@@ -51,18 +58,30 @@ public class PostService {
                         () -> new MemberException(ErrorCode.MEMBER_NOT_FOUND)
                 );
         // 전체 피드 조회
-        return postRepository.findAll()
+// 전체 피드 조회 - 사이즈를 하나 더 크게 조회하여 다음 데이터가 있는지 체크
+        List<PostResponse> feedList = postRepository.findAll(offset, size + 1)
                 .stream()
                 .map(post -> {
                     LikeStatusResponse likeStatus = LikeStatusResponse.of(
                             postLikeRepository.findByPostIdAndMemberId(post.getId()
-                                    ,foundMember.getId()).isPresent()
-                            ,postLikeRepository.countByPostId(post.getId())
+                                    , foundMember.getId()).isPresent()
+                            , postLikeRepository.countByPostId(post.getId())
                     );
                     long commentCount = commentRepository.countByPostId(post.getId());
-                  return PostResponse.of(post,likeStatus,commentCount);
+                    return PostResponse.of(post, likeStatus, commentCount);
                 })
                 .collect(Collectors.toList());
+
+        // 다음 페이지가 존재하는지 여부 확인
+        // 클라이언트가 요구한 개수보다 많이 조회되었다면
+        boolean hasNext = feedList.size() > size;
+        // 클라이언트에게 다음 페이지 데이터가 있는게 확인되었다면
+        // size + 1개를 반환하면 안된다. 마지막 데이터를 지우고 반환
+        if (hasNext) {
+            feedList.remove(feedList.size() - 1);
+        }
+        return FeedResponse.of(feedList, hasNext);
+
     }
 
     // 피드 생성 DB에 가기 전 후 중간처리
@@ -128,7 +147,7 @@ public class PostService {
         hashtagNames.forEach(hashtagName -> {
 
             // 일단 해시태그가 저장되어있는지 여부를 확인 - 조회해봄
-           Hashtag foundHashtag = hashtagRepository.findByName(hashtagName)
+            Hashtag foundHashtag = hashtagRepository.findByName(hashtagName)
                     .orElseGet(() -> {
                         Hashtag newHashtag = Hashtag.builder().name(hashtagName).build();
                         hashtagRepository.insertHashtag(newHashtag);
@@ -149,9 +168,10 @@ public class PostService {
         });
 
     }
+
     // 피드 단일 조회 처리
-    @Transactional (readOnly = true)
-    public PostDetailResponse getPostDetails(Long postId, String username){
+    @Transactional(readOnly = true)
+    public PostDetailResponse getPostDetails(Long postId, String username) {
         // 유저의 이름을 통해 해당 유저의 id를 구함
         Member foundMember = memberRepository.findByUsername(username)
                 .orElseThrow(
