@@ -36,4 +36,10 @@ public class RouteController {
     public String profilePage() {
         return "components/profile-page";
     }
+
+    // 해시태그 페이지 열기
+    @GetMapping("/explore/search/keyword/")
+    public String hashtag(){
+        return "components/hashtag-search";
+    }
 }
