@@ -1,4 +1,4 @@
-package com.example.instagramclone.domain.follow.dto;
+package com.example.instagramclone.domain.follow.dto.response;
 
 import lombok.*;
 

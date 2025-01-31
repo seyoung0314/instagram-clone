@@ -1,6 +1,6 @@
 package com.example.instagramclone.service;
 
-import com.example.instagramclone.domain.follow.dto.FollowStatusResponse;
+import com.example.instagramclone.domain.follow.dto.response.FollowStatusResponse;
 import com.example.instagramclone.domain.member.dto.response.MeResponse;
 import com.example.instagramclone.domain.member.dto.response.ProfileHeaderResponse;
 import com.example.instagramclone.domain.member.entity.Member;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 // 개인 프로필 처리
 @Service

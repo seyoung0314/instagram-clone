@@ -4,6 +4,7 @@ import com.example.instagramclone.domain.member.entity.Member;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mapper
@@ -21,4 +22,8 @@ public interface MemberRepository {
     void updateProfileImage(
             @Param("imageUrl")String imageUrl, 
             @Param("username") String username);
+
+    // 검색어 기반 회원 검색
+    List<Member> searchMember(String keyword);
+
 }

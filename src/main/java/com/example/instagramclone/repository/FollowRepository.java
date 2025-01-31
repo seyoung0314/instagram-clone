@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.security.core.userdetails.User;
 
+import java.util.List;
+
 @Mapper
 public interface FollowRepository {
     // 팔로우 처리
@@ -29,4 +31,11 @@ public interface FollowRepository {
             @Param("userId") Long userId
             , @Param("type") String type
     );
+
+    // 특정 유저의 팔로워/팔로잉 유저 목록 조회
+    List<Follow> findFollowList(
+            @Param("userId") Long userId
+            , @Param("type") String type
+    );
+
 }

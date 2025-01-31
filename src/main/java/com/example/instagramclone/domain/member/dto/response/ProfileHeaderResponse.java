@@ -4,7 +4,7 @@ package com.example.instagramclone.domain.member.dto.response;
     프로필 페이지 상단에 렌더링할 데이터들을 json으로 변환하는 클래스
     ( 프로필 사진, 사용자 이름, 이름, 피드 게시물 수 )
  */
-import com.example.instagramclone.domain.follow.dto.FollowStatusResponse;
+import com.example.instagramclone.domain.follow.dto.response.FollowStatusResponse;
 import com.example.instagramclone.domain.member.entity.Member;
 import lombok.*;
 
