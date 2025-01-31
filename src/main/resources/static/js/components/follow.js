@@ -1,21 +1,10 @@
-import { fetchWithAuth } from "../util/api.js";
-import { getPageUsername, isUserMatched } from "./profile-page.js";
 
-// 서버에 팔로우 토글 요청 보내기
-async function toggleFollow() {
-  const pageUserName = getPageUsername();
-  const response = await fetchWithAuth(`/api/follows/${pageUserName}`, {
-    method: "POST",
-  });
-  if (!response.ok) {
-    alert("실패");
-  }
-  const data = await response.json();
+import { getPageUsername, isUserMatched } from './profile-page.js';
+import { toggleFollow } from '../util/api.js';
 
-  return data;
-}
 
-function updateFollowButton($button,isFollowing){
+// 팔로우 상태에 따른 버튼 렌더링 변경
+function updateFollowButton($button, isFollowing) {
 
   $button.className = isFollowing ? 'following-button' : 'follow-button';
   $button.innerHTML = isFollowing ? `팔로잉 <i class="fa-solid fa-chevron-down"></i>` : '팔로우';
@@ -38,21 +27,25 @@ function updateFollowButton($button,isFollowing){
 
 }
 
+// 초기 팔로우 버튼 이벤트 처리
 async function initFollowButton() {
-  // 내페이지에서는 팔로우 처리 하지 않기
+  // 내 페이지에서는 팔로우 처리를 진행하지 않음
   if (await isUserMatched()) return;
 
-  // 팔로우 버튼 이벤트 처리
   // 팔로우 토글 기능
-  const $followButton = document.querySelector(".follow-button");
-  
-  $followButton.addEventListener("click", async (e) => {
-    console.log("Dddd");
+  // 팔로우 버튼에 이벤트 처리
+  let $followButton = document.querySelector('.follow-button');
+  if (!$followButton) {
+    $followButton = document.querySelector('.following-button');
+  }
 
-    const { following: isFollowing, followerCount } = await toggleFollow();
+  $followButton.addEventListener('click', async (e) => {
+    const pageUsername = getPageUsername();
 
-    // 해당 페이지 유저의 팔로우 수 갱신
-    document.querySelector(".follower-count").textContent = followerCount;
+    const { following: isFollowing, followerCount } = await toggleFollow(pageUsername);
+
+    // 해당 페이지 유저의 팔로워 수 갱신
+    document.querySelector('.follower-count').textContent = followerCount;
 
     // 버튼 상태 업데이트
     updateFollowButton($followButton, isFollowing);
@@ -60,6 +53,8 @@ async function initFollowButton() {
 }
 
 // 팔로우 관련 종합 처리 (팔로우 버튼 토글, 팔로우 모달 등)
-export async function initFollow() {
+export default async function initFollow() {
+  // console.log('init follow!');
+
   await initFollowButton();
 }

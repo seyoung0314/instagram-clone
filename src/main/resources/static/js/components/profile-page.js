@@ -5,6 +5,7 @@ import initSideBar from './side-bar.js';
 import { getCurrentUser } from '../util/auth.js';
 import initFeedDetailModal from './feed-detail-modal.js';
 import {initFollow} from './follow.js';
+import initSearchModal from './search-modal.js';
 
 const $profileImageContainer = document.querySelector(
   '.profile-image-container'
@@ -240,4 +241,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   await initChangeProfileImage(); // 프사 변경 관련
   initFeedDetailModal(); // 상세보기 모달 관련
   initFollow(); // 팔로우 처리 관련
+  initSearchModal(); // 검색창 모달
 });

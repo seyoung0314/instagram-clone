@@ -7,6 +7,7 @@ import initMoreMenu from "./components/more-menu.js";
 import initSuggestions from "./components/suggestions.js";
 import initSideBar from "./components/side-bar.js";
 import initFeedDetailModal from "./components/feed-detail-modal.js";
+import initSearchModal from './components/search-modal.js';
 
 // 모든 태그가 랜더링되면 실행되는 이벤트
 document.addEventListener("DOMContentLoaded", () => {
@@ -18,4 +19,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initSuggestions(); // 사용자 추천 관련
   initSideBar();  // 사이드바 관련련
   initFeedDetailModal(); // 상세보기 모달
+  initSearchModal(); // 검색창 모달 관련
 });

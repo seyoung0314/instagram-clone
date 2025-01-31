@@ -83,5 +83,16 @@
             <result property="profileImageUrl" column="following_profile_image"/>
         </association>
     </resultMap>
+    <!-- 공통 팔로워 사용자 이름 조회 -->
+    <select id="findCommonFollowingUsernames" resultType="String">
+        SELECT u.username
+        FROM users u
+        WHERE u.id IN (SELECT follower_id
+        FROM follows
+        WHERE following_id = #{targetUserId})
+        AND u.id IN (SELECT follower_id
+        FROM follows
+        WHERE following_id = #{currentUserId})
+    </select>
 
 </mapper>

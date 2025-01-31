@@ -2,6 +2,7 @@ package com.example.instagramclone.controller.rest;
 
 import com.example.instagramclone.domain.post.dto.request.PostCreate;
 
+import com.example.instagramclone.domain.post.dto.response.FeedResponse;
 import com.example.instagramclone.domain.post.dto.response.PostDetailResponse;
 import com.example.instagramclone.domain.post.dto.response.PostResponse;
 import com.example.instagramclone.domain.post.entity.Post;

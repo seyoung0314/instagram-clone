@@ -24,6 +24,11 @@ public interface MemberRepository {
             @Param("username") String username);
 
     // 검색어 기반 회원 검색
-    List<Member> searchMember(String keyword);
+    List<Member> searchMembers(String keyword);
 
+    //  추천할 사용자 목록 조회 (팔로우하지 않은 사용자 중)
+    List<Member> findMembersToSuggest(
+            @Param("currentUserId") Long currentUserId,
+            @Param("limit") int limit
+    );
 }
