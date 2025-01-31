@@ -210,8 +210,6 @@ export async function openModal(postId) {
 
   const data = await response.json();
 
-  console.log(data);
-
   // 화면에 렌더링
   renderModalContent(data);
 
@@ -249,6 +247,8 @@ function initFeedDetailModal() {
       const $gridItem = e.target.closest(".grid-item");
 
       const postId = $gridItem.dataset.postId;
+      console.log(postId);
+      
       openModal(postId);
     });
   }

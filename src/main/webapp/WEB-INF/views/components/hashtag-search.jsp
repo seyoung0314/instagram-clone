@@ -28,7 +28,7 @@
     <main class="explore-container">
         <header class="explore-header">
             <div class="hashtag-info">
-                <h1>#dkdkddd</h1>
+                <h1></h1>
             </div>
         </header>
 
