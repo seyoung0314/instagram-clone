@@ -23,8 +23,10 @@ function createFeedItem({ commentCount,feed_id: feedId, username, profileImageUr
   //   return imgTag;
   // };
 
-  return `
-    <article class="post" data-post-id="${feedId}">
+  const $article = document.createElement('article');
+  $article.classList.add('post');
+  $article.dataset.postId = feedId;
+  $article.innerHTML = `
       <div class="post-header">
         <div class="post-user-info">
           <div class="post-profile-image">
@@ -126,8 +128,8 @@ function createFeedItem({ commentCount,feed_id: feedId, username, profileImageUr
           <button type="submit" class="comment-submit-btn" disabled>게시</button>
         </form>
       </div>
-    </article>
   `;
+  return $article;
 }
 
 
@@ -141,7 +143,10 @@ async function renderFeed() {
 
   //feed html을 생성하는 함수
 
-  const feedHtml = feedList.map((feed) => createFeedItem(feed)).join("");
+  feedList.map((feed) => createFeedItem(feed))
+    .forEach($article => {
+      $feedContainer.append($article);
+    });
 
   $feedContainer.innerHTML = feedHtml;
 
