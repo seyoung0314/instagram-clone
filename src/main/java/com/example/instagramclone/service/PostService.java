@@ -45,7 +45,7 @@ public class PostService {
 
     // 피드 목록 조회 중간처리 (전체조회 후 이미지 조회하는 방식)
     @Transactional(readOnly = true)
-    public FeedResponse findAllFeeds(String username, int size, int page) {
+    public FeedResponse<PostResponse> findAllFeeds(String username, int size, int page) {
         // offset은 size에 따라 숫자가 바뀜
         /*
             size = 5   ->   offset  0, 5, 10, 15, 20

@@ -32,6 +32,12 @@ public interface PostRepository {
     // 특정 사용자의 프로필 페이지 전용 피드 목록 조회
     List<ProfilePostResponse> findProfilePosts(Long memberId);
 
+    // 특저 해시태그 페이지 전용 피드 목록 조회
+    List<ProfilePostResponse> findPostsByHashtag(
+            @Param("offset") int offset
+            , @Param("limit") int limit
+            , @Param("tagName") String tagName);
+
     // 단일 피드 상세 조회
     Optional<Post> findPostDetailById(Long postId);
 
@@ -41,6 +47,7 @@ public interface PostRepository {
             @Param("offset") int offset,
             @Param("limit") int limit
     );
+
     // 팔로잉이 없는 경우를 위한 추천 피드 조회
     List<Post> findRecommendedPosts(
             @Param("offset") int offset,
