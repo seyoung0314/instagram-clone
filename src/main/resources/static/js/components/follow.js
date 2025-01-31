@@ -53,7 +53,7 @@ async function initFollowButton() {
 }
 
 // 팔로우 관련 종합 처리 (팔로우 버튼 토글, 팔로우 모달 등)
-export default async function initFollow() {
+export async function initFollow() {
   // console.log('init follow!');
 
   await initFollowButton();
